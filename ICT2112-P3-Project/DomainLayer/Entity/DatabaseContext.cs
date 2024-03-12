@@ -68,8 +68,9 @@ public partial class DatabaseContext : DbContext
     public virtual DbSet<SafetyChecklistAssessment> SafetyChecklistAssessments { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlite("DataSource=..\\database.db;");
+    {
+        optionsBuilder.UseSqlite("DataSource=..\\database.db;");
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -380,22 +381,66 @@ public partial class DatabaseContext : DbContext
 
         modelBuilder.Entity<PatientMedicalPlan>(entity =>
         {
-            entity.HasKey(e => e.MedicalPlanId);
+            entity.HasKey(e => e.PlanId);
 
             entity.ToTable("Patient Medical Plan");
 
-            entity.Property(e => e.MedicalPlanId).HasColumnName("medicalPlanId");
-            entity.Property(e => e.DrugId).HasColumnName("drugId");
-            entity.Property(e => e.MedicalPlanDescription).HasColumnName("medicalPlanDescription");
+            entity.Property(e => e.PlanId).HasColumnName("planId");
+            entity.Property(e => e.AccountId).HasColumnName("accountId");
             entity.Property(e => e.PatientId).HasColumnName("patientId");
-
-            entity.HasOne(d => d.Drug).WithMany(p => p.PatientMedicalPlans)
-                .HasForeignKey(d => d.DrugId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+            entity.Property(e => e.PlanNotes).HasColumnName("planNotes");
+            entity.Property(e => e.PlanStart).HasColumnName("planStart");
+            entity.Property(e => e.PlanEnd).HasColumnName("planEnd");
+            entity.Property(e => e.TrackPlan).HasColumnName("trackPlan");
+            entity.Property(e => e.AssignedByNurseId).HasColumnName("assignedByNurseId");
 
             entity.HasOne(d => d.Patient).WithMany(p => p.PatientMedicalPlans)
                 .HasForeignKey(d => d.PatientId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
+
+        });
+
+        modelBuilder.Entity<Prescription>(entity =>
+        {
+            entity.HasKey(p => new { p.DrugId, p.MedicationTrackerId, p.PatientMedicalPlanId }); // Composite key, if there's no unique PrescriptionId
+
+            entity.HasOne(p => p.Drug)
+                  .WithMany(d => d.Prescriptions)
+                  .HasForeignKey(p => p.DrugId);
+
+            entity.HasOne(p => p.MedicationTracker)
+                  .WithMany(mt => mt.Prescriptions)
+                  .HasForeignKey(p => p.MedicationTrackerId);
+
+            entity.HasOne(p => p.PatientMedicalPlan)
+                  .WithMany(mp => mp.Prescriptions)
+                  .HasForeignKey(p => p.PatientMedicalPlanId);
+        });
+
+        modelBuilder.Entity<MedicationTracker>(entity =>
+        {
+            entity.HasKey(mt => mt.TrackingId);
+
+            entity.ToTable("Medication Tracker");
+
+            entity.Property(mt => mt.TrackingId).HasColumnName("trackingId");
+            entity.Property(mt => mt.TimesPerDay).HasColumnName("timesPerDay");
+            entity.Property(mt => mt.BeforeMeals).HasColumnName("beforeMeals");
+            entity.Property(mt => mt.Day).HasColumnName("day");
+            entity.Property(mt => mt.HasNotified).HasColumnName("hasNotified");
+        });
+
+        modelBuilder.Entity<ConsumedDateTime>(entity =>
+        {
+            entity.HasKey(cd => new { cd.MedicationTrackerId, cd.DateTime });
+
+            entity.Property(cd => cd.MedicationTrackerId).HasColumnName("medicationTrackerId");
+            entity.Property(cd => cd.DateTime).HasColumnName("DateTime");
+
+            modelBuilder.Entity<ConsumedDateTime>()
+                .HasOne(cd => cd.MedicationTracker)
+                .WithMany(mt => mt.ConsumedOn)
+                .HasForeignKey(cd => cd.MedicationTrackerId);
         });
 
         modelBuilder.Entity<PatientMedicalRecord>(entity =>
