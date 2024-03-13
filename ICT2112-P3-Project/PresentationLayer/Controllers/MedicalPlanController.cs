@@ -54,6 +54,7 @@ namespace PresentationLayer.Controllers
             // Here, you'd use the planId to generate a plan
             // This is a placeholder for your existing logic
             // For now, we'll just redirect to the Index view as a placeholder
+            MedicalPlanManagement medicalPlanManagement = new MedicalPlanManagement(_medicalPlanTDG);
             Console.WriteLine("Generating plan for planId: " + planId);
             _logger.LogInformation("Generating plan for plan ID {PlanId}", planId);
             return RedirectToAction("Index");
