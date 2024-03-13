@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Humanizer;
+using Microsoft.AspNetCore.Mvc;
+using System.Buffers.Text;
 
 namespace PresentationLayer.Controllers
 {
@@ -9,7 +11,7 @@ namespace PresentationLayer.Controllers
         {
             if (imageFile != null && imageFile.Length > 0)
             {
-                // Step 1: Read the uploaded image into a MemoryStream
+                // Read the uploaded image into a MemoryStream
                 using (var memoryStream = new MemoryStream())
                 {
                     await imageFile.CopyToAsync(memoryStream);
@@ -17,15 +19,15 @@ namespace PresentationLayer.Controllers
                     // Ensure the memory stream is at the beginning before reading
                     memoryStream.Position = 0;
 
-                    // Step 2: Convert the byte array to a Base64 string
+                    // Convert the byte array to a Base64 string
                     var imageBytes = memoryStream.ToArray();
                     var base64String = Convert.ToBase64String(imageBytes);
 
                     // Now you have the image as a Base64 string
                     // You can pass this string to your view, store it, or perform further actions
 
-                    // For demonstration, let's just return it to the view
-                    ViewBag.Base64String = base64String;
+                    // MedicalPlanManagement planManagement = new MedicalPlanManagement();
+                    // planManagement.ExecuteOCR(base64String);
                     return View();
                 }
 
