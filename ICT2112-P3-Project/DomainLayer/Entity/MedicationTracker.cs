@@ -15,6 +15,15 @@ namespace DomainLayer.Entity
         public virtual ICollection<ConsumedDateTime> ConsumedOn { get; set; } = new List<ConsumedDateTime>();
         public DateTime HasNotified { get; set; }
         public virtual ICollection<Prescription> Prescriptions { get; set; } = new List<Prescription>();
-
+        public MedicationTracker CreateTracker(int timesPerDay, bool beforeMeals, string day)
+        {
+            var tracker = new MedicationTracker
+            {
+                TimesPerDay = timesPerDay,
+                BeforeMeals = beforeMeals,
+                Day = day,
+            };
+            return tracker;
+        }
     }
 }
