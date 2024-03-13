@@ -10,7 +10,7 @@ namespace DomainLayer.Interface
 {
     public interface IMedicalPlan
     {
-        public void GeneratePlan();
+        public void GeneratePlan(PatientMedicalPlan medicalPlan);
         public void ExportPlan();
         public String ExecuteOCR(string base64EncodedImage);
     }

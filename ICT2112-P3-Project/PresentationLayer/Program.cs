@@ -13,6 +13,8 @@ builder.Services.AddDbContext<DataContext>(options =>
 // Register data source layer abstractions to decouple.
 builder.Services.AddScoped<IAdministratorTDG, AdministratorTDG>();
 
+builder.Services.AddScoped<IMedicalPlanTDG, MedicalPlanTDG>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

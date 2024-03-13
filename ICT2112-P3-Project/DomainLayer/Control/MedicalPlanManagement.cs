@@ -16,7 +16,7 @@ namespace DomainLayer.Control
             _medicalPlanTDG = medicalPlanTDG;
         }
 
-        public void GeneratePlan()
+        public void GeneratePlan(PatientMedicalPlan medicalPlan)
         {
             throw new NotImplementedException();
         }

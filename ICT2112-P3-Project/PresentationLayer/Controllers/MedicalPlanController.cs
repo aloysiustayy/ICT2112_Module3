@@ -1,4 +1,7 @@
-﻿using Humanizer;
+﻿using DomainLayer.Control;
+using DomainLayer.Entity;
+using DomainLayer.Interface;
+using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 using System.Buffers.Text;
 
@@ -6,6 +9,15 @@ namespace PresentationLayer.Controllers
 {
     public class MedicalPlanController : Controller
     {
+        private readonly ILogger<MedicalPlanController> _logger;
+        private readonly IMedicalPlanTDG _medicalPlanTDG;
+
+        public MedicalPlanController(ILogger<MedicalPlanController> logger, IMedicalPlanTDG medicalPlanTDG)
+        {
+            _logger = logger;
+            _medicalPlanTDG = medicalPlanTDG;
+        }
+
         [HttpPost]
         public async Task<IActionResult> SubmitImage(IFormFile imageFile)
         {
@@ -35,9 +47,34 @@ namespace PresentationLayer.Controllers
             }
             return View();
         }
+
+        [HttpPost]
+        public IActionResult GeneratePlan(long planId)
+        {
+            // Here, you'd use the planId to generate a plan
+            // This is a placeholder for your existing logic
+            // For now, we'll just redirect to the Index view as a placeholder
+            Console.WriteLine("Generating plan for planId: " + planId);
+            _logger.LogInformation("Generating plan for plan ID {PlanId}", planId);
+            return RedirectToAction("Index");
+        }
+
+
         public IActionResult ImageUpload()
         {
             return View();
         }
+
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        public IActionResult GeneratePlan()
+        {
+            // Simply returns the view with the form
+            return View();
+        }
+
     }
 }
