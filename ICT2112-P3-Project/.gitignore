@@ -489,3 +489,6 @@ $RECYCLE.BIN/
 # .NET Core build folders
 bin/
 obj/
+
+# Entity Framework Core Migrations
+**/Migrations/*
