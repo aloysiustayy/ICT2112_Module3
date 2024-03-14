@@ -1,0 +1,21 @@
+﻿@{
+    ViewData["Title"] = "Generate Medical Plan";
+}
+
+
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="mt-5">
+            <h2>@ViewData["Title"]</h2>
+            <form method="post" action="@Url.Action("GeneratePlan", "MedicalPlan")">
+                <div class="form-group">
+                    <label for="planId">Plan ID:</label>
+                    <input type="number" class="form-control" id="planId" name="planId" required>
+                </div>
+                <button type="submit" class="btn btn-success mt-2">Submit</button>
+            </form>
+            </div>
+        </div>
+    </div>
+</section>
