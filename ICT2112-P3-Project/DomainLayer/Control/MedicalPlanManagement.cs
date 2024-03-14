@@ -48,7 +48,7 @@ namespace DomainLayer.Control
         }
         public string ExecuteOCR(string base64EncodedImage)
         {
-            throw new NotImplementedException();
+            return base64EncodedImage;
         }
 
         public void ExportPlan()

@@ -68,6 +68,7 @@ public partial class DataContext : DbContext
 
     public virtual DbSet<SafetyChecklistAssessment> SafetyChecklistAssessments => Set<SafetyChecklistAssessment>();
 
+    public virtual DbSet<MedicationTracker> MedicationTrackers => Set<MedicationTracker>();
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlite("DataSource=..\\database.db;");
 

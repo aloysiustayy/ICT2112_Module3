@@ -8,7 +8,7 @@
         <div class="row">
             <div class="mt-5">
                 <h2>@ViewData["Title"]</h2>
-                <form asp-action="UploadImage" asp-controller="Home" method="post" enctype="multipart/form-data">
+                <form asp-action="SubmitImage" asp-controller="MedicalPlan" method="post" enctype="multipart/form-data">
                     <div class="form-group mb-3">
                         <label for="imageFile">Choose image to upload</label>
                         <input type="file" class="form-control mt-2 mb-2" name="imageFile" id="imageFile" required />

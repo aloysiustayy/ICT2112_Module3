@@ -38,14 +38,15 @@ namespace PresentationLayer.Controllers
                     // Now you have the image as a Base64 string
                     // You can pass this string to your view, store it, or perform further actions
 
-                    // MedicalPlanManagement planManagement = new MedicalPlanManagement();
-                    // planManagement.ExecuteOCR(base64String);
-                    return View();
+                    MedicalPlanManagement planManagement = new MedicalPlanManagement(_medicalPlanTDG);
+                    string test = planManagement.ExecuteOCR(base64String);
+                    Console.WriteLine(test);
+                    return RedirectToAction("ImageUpload");
                 }
 
                 // Redirect or return a view here after successful upload
             }
-            return View();
+            return RedirectToAction("ImageUpload");
         }
 
         [HttpPost]
