@@ -1,7 +1,6 @@
 ﻿using DomainLayer.Control;
 using DomainLayer.Entity;
 using DomainLayer.Interface;
-using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 using System.Buffers.Text;
 
