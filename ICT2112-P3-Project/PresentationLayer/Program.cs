@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using DomainLayer.Interface;
 using DataSourceLayer.Data;
 using DataSourceLayer.Gateway;
+using DomainLayer.Control;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,8 @@ builder.Services.AddDbContext<DataContext>(options =>
 builder.Services.AddScoped<IAdministratorTDG, AdministratorTDG>();
 
 builder.Services.AddScoped<IMedicalPlanTDG, MedicalPlanTDG>();
+
+builder.Services.AddScoped<IOCR_API_TDG, OCR_API_TDG>();
 
 var app = builder.Build();
 

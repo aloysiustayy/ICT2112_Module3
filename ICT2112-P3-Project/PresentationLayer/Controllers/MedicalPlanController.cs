@@ -11,11 +11,13 @@ namespace PresentationLayer.Controllers
     {
         private readonly ILogger<MedicalPlanController> _logger;
         private readonly IMedicalPlanTDG _medicalPlanTDG;
+        private readonly IOCR_API_TDG _iOCR_API_TDG;
 
-        public MedicalPlanController(ILogger<MedicalPlanController> logger, IMedicalPlanTDG medicalPlanTDG)
+        public MedicalPlanController(ILogger<MedicalPlanController> logger, IMedicalPlanTDG medicalPlanTDG, IOCR_API_TDG iOCR_API_TDG)
         {
             _logger = logger;
             _medicalPlanTDG = medicalPlanTDG;
+            _iOCR_API_TDG = iOCR_API_TDG;
         }
 
         [HttpPost]
@@ -38,8 +40,8 @@ namespace PresentationLayer.Controllers
                     // Now you have the image as a Base64 string
                     // You can pass this string to your view, store it, or perform further actions
 
-                    MedicalPlanManagement planManagement = new MedicalPlanManagement(_medicalPlanTDG);
-                    string test = planManagement.ExecuteOCR(base64String);
+                    MedicalPlanManagement planManagement = new MedicalPlanManagement(_medicalPlanTDG, _iOCR_API_TDG);
+                    string test = await planManagement.ExecuteOCR(base64String);
                     Console.WriteLine(test);
                     return RedirectToAction("ImageUpload");
                 }

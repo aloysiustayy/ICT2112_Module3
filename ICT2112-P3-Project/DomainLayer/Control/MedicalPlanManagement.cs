@@ -11,9 +11,15 @@ namespace DomainLayer.Control
     public class MedicalPlanManagement : IMedicalPlan
     {
         private readonly IMedicalPlanTDG _medicalPlanTDG;
+        private readonly IOCR_API_TDG _iOCR_API_TDG;
         public MedicalPlanManagement(IMedicalPlanTDG medicalPlanTDG)
         {
             _medicalPlanTDG = medicalPlanTDG;
+        }
+        public MedicalPlanManagement(IMedicalPlanTDG medicalPlanTDG, IOCR_API_TDG oCR_API_TDG)
+        {
+            _medicalPlanTDG = medicalPlanTDG;
+            _iOCR_API_TDG = oCR_API_TDG;
         }
 
         public void GeneratePlan(PatientMedicalPlan medicalPlan)
@@ -46,9 +52,10 @@ namespace DomainLayer.Control
                 existingTracker.Day = day;
             }
         }
-        public string ExecuteOCR(string base64EncodedImage)
+        public async Task<string> ExecuteOCR(string base64EncodedImage)
         {
-            return base64EncodedImage;
+            var ocrResult = await _iOCR_API_TDG.DetectText(base64EncodedImage);
+            return ocrResult;
         }
 
         public void ExportPlan()
