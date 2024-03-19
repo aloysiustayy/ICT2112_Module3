@@ -15,6 +15,10 @@ builder.Services.AddScoped<IAdministratorTDG, AdministratorTDG>();
 
 builder.Services.AddScoped<IMedicalPlanTDG, MedicalPlanTDG>();
 
+builder.Services.AddScoped<IDrugRecordTDG, DrugRecordTDG>();
+
+builder.Services.AddScoped<IDrugTDG, DrugTDG>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
