@@ -18,6 +18,19 @@ namespace PresentationLayer.Controllers
             _medicalPlanTDG = medicalPlanTDG;
         }
 
+        public class MedicationOption
+        {
+            public string Name { get; set; }
+            public string Value { get; set; } // Optional, can be used as the actual value submitted by the form
+        }
+
+        public class MedicationViewModel
+        {
+            public List<MedicationOption> MedicationOptions { get; set; } = new List<MedicationOption>();
+            public List<string> SelectedMedicationNames { get; set; } = new List<string>();
+            public List<string> Dosage { get; set; } = new List<string>();
+        }
+
         [HttpPost]
         public async Task<IActionResult> SubmitImage(IFormFile imageFile)
         {
@@ -49,16 +62,20 @@ namespace PresentationLayer.Controllers
         }
 
         [HttpPost]
-        public IActionResult GeneratePlan(long planId)
+        public IActionResult GeneratePlan(MedicationViewModel model)
         {
-            // Here, you'd use the planId to generate a plan
-            // This is a placeholder for your existing logic
-            // For now, we'll just redirect to the Index view as a placeholder
-            MedicalPlanManagement medicalPlanManagement = new MedicalPlanManagement(_medicalPlanTDG);
-            Console.WriteLine("Generating plan for planId: " + planId);
-            _logger.LogInformation("Generating plan for plan ID {PlanId}", planId);
+            // Example of logging the received data
+            for (int i = 0; i < model.SelectedMedicationNames.Count; i++)
+            {
+                _logger.LogInformation("Medication: {MedicationName}, Dosage: {Dosage}",
+                    model.SelectedMedicationNames[i], model.Dosage[i]);
+            }
+
+            // Additional processing here
+
             return RedirectToAction("Index");
         }
+
 
 
         public IActionResult ImageUpload()
@@ -71,10 +88,28 @@ namespace PresentationLayer.Controllers
             return View();
         }
 
-        public IActionResult GeneratePlan()
+        public async Task<IActionResult> GeneratePlan()
         {
-            // Simply returns the view with the form
-            return View();
+
+            //  var medications = await _medicalPlanTDG.GetMedicationsAsync();
+
+            // Simulating an asynchronous operation to fetch medications
+            var medicationOptions = await Task.FromResult(new List<MedicationOption>
+            {
+                new MedicationOption { Name = "Acetaminophen", Value = "1" },
+                new MedicationOption { Name = "Ibuprofen", Value = "2" },
+                new MedicationOption { Name = "Amoxicillin", Value = "3" },
+                new MedicationOption { Name = "Ciprofloxacin", Value = "4" },
+                new MedicationOption { Name = "Clindamycin", Value = "5" }
+                // Add more sample medications as needed
+            });
+
+            var viewModel = new MedicationViewModel
+            {
+                MedicationOptions = medicationOptions
+            };
+
+            return View(viewModel);
         }
 
     }

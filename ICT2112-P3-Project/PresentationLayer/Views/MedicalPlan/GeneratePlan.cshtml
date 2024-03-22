@@ -1,4 +1,6 @@
-﻿@{
+﻿﻿@model PresentationLayer.Controllers.MedicationViewModel
+@{
+    
     ViewData["Title"] = "Generate Medical Plan";
 }
 
@@ -8,14 +10,45 @@
         <div class="row">
             <div class="mt-5">
             <h2>@ViewData["Title"]</h2>
-            <form method="post" action="@Url.Action("GeneratePlan", "MedicalPlan")">
-                <div class="form-group">
-                    <label for="planId">Plan ID:</label>
-                    <input type="number" class="form-control" id="planId" name="planId" required>
-                </div>
-                <button type="submit" class="btn btn-success mt-2">Submit</button>
-            </form>
+
+                <form id="medicationForm" method="post" action="@Url.Action("GeneratePlan", "MedicalPlan")">
+                    <div id="medicationContainer">
+                        <div class="medicationEntry">
+                            <label for="medicationName">Medication Name:</label>
+                            <select class="form-control" name="SelectedMedicationNames[0]" required>
+                                @foreach (var option in Model.MedicationOptions)
+                                {
+                                    <option value="@option.Value">@option.Name</option>
+                                }
+                            </select>
+
+                            <label for="dosage">Dosage:</label>
+                            <input type="text" class="form-control" name="Dosage[0]" required>
+                        </div>
+                    </div>
+                    <button type="button" id="addMore" class="btn btn-primary">Add More</button>
+                    <button type="submit" class="btn btn-success">Submit</button>
+                </form>
+
             </div>
         </div>
     </div>
 </section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var index = 1; // Start from 1 since 0 is already in the HTML
+            $('#addMore').click(function (e) {
+                e.preventDefault();
+                var newEntry = $('.medicationEntry:first').clone();
+                // Correct the name attribute for both the select and input fields
+                newEntry.find('select').attr('name', 'SelectedMedicationNames[' + index + ']');
+                newEntry.find('input').attr('name', 'Dosage[' + index + ']');
+                newEntry.find('input').val('');
+                newEntry.appendTo('#medicationContainer');
+                index++;
+            });
+        });
+    </script>
+}
