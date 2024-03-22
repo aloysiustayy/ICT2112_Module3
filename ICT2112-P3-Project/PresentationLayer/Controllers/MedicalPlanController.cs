@@ -3,10 +3,15 @@ using DomainLayer.Entity;
 using DomainLayer.Interface;
 using Humanizer;
 using Microsoft.AspNetCore.Mvc;
+using PresentationLayer.Views.ViewModel;
 using System.Buffers.Text;
 
 namespace PresentationLayer.Controllers
 {
+
+
+
+
     public class MedicalPlanController : Controller
     {
         private readonly ILogger<MedicalPlanController> _logger;
@@ -16,19 +21,6 @@ namespace PresentationLayer.Controllers
         {
             _logger = logger;
             _medicalPlanTDG = medicalPlanTDG;
-        }
-
-        public class MedicationOption
-        {
-            public string Name { get; set; }
-            public string Value { get; set; } // Optional, can be used as the actual value submitted by the form
-        }
-
-        public class MedicationViewModel
-        {
-            public List<MedicationOption> MedicationOptions { get; set; } = new List<MedicationOption>();
-            public List<string> SelectedMedicationNames { get; set; } = new List<string>();
-            public List<string> Dosage { get; set; } = new List<string>();
         }
 
         [HttpPost]
@@ -77,7 +69,6 @@ namespace PresentationLayer.Controllers
         }
 
 
-
         public IActionResult ImageUpload()
         {
             return View();
@@ -103,14 +94,32 @@ namespace PresentationLayer.Controllers
                 new MedicationOption { Name = "Clindamycin", Value = "5" }
                 // Add more sample medications as needed
             });
-
-            var viewModel = new MedicationViewModel
+            var viewModel = new MedicationPlanViewModel
             {
-                MedicationOptions = medicationOptions
+                MedicationOptions = medicationOptions,
+                WeeklyPlan = new Dictionary<string, List<MedicationTask>>
+                {
+                          { "Sunday", new List<MedicationTask> { new MedicationTask { MedicationName = "Acetaminophen", Dosage = "500mg", Times = new List<string> { "08:00 AM", "08:00 PM" } } } },
+
+                }
             };
 
             return View(viewModel);
         }
 
+
+        public IActionResult WeeklyMedicationPlan()
+        {
+            var viewModel = new WeeklyMedicationPlanViewModel
+            {
+                WeeklyPlan = new Dictionary<string, List<MedicationTask>>
+        {
+            { "Sunday", new List<MedicationTask> { new MedicationTask { MedicationName = "Acetaminophen", Dosage = "500mg", Times = new List<string> { "08:00 AM", "08:00 PM" } } } },
+            // Add entries for other days of the week...
+        }
+            };
+
+            return View(viewModel);
+        }
     }
 }

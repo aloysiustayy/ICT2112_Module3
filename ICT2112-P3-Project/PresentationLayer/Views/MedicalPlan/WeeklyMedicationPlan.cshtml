@@ -1,0 +1,40 @@
+﻿@model PresentationLayer.Views.ViewModel.WeeklyMedicationPlanViewModel
+@{
+    ViewData["Title"] = "WeeklyMedicationPlan";
+}
+
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="mt-5">
+                <h2>@ViewData["Title"]</h2>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Day</th>
+                            <th>Medication Name</th>
+                            <th>Dosage</th>
+                            <th>Times</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var dayPlan in Model.WeeklyPlan)
+                        {
+                            foreach (var task in dayPlan.Value)
+                            {
+                                <tr>
+                                    <td>@dayPlan.Key</td>
+                                    <td>@task.MedicationName</td>
+                                    <td>@task.Dosage</td>
+                                    <td>@string.Join(", ", task.Times)</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</section>

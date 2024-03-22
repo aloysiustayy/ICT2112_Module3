@@ -1,6 +1,6 @@
-﻿﻿@model PresentationLayer.Controllers.MedicationViewModel
+﻿@model PresentationLayer.Views.ViewModel.MedicationPlanViewModel
 @{
-    
+
     ViewData["Title"] = "Generate Medical Plan";
 }
 
@@ -9,7 +9,7 @@
     <div class="container">
         <div class="row">
             <div class="mt-5">
-            <h2>@ViewData["Title"]</h2>
+                <h2>@ViewData["Title"]</h2>
 
                 <form id="medicationForm" method="post" action="@Url.Action("GeneratePlan", "MedicalPlan")">
                     <div id="medicationContainer">
@@ -24,12 +24,37 @@
 
                             <label for="dosage">Dosage:</label>
                             <input type="text" class="form-control" name="Dosage[0]" required>
+
+                            <label for="day">Day:</label>
+                            <select class="form-control" name="Days[0]" required>
+                                <option value="Sunday">Sunday</option>
+                                <option value="Monday">Monday</option>
+                                <!-- Add other days -->
+                            </select>
+
+                            <label for="timeStart">Time Start:</label>
+                            <input type="time" class="form-control" name="TimeStarts[0]" required>
+
+                            <label for="timeEnd">Time End:</label>
+                            <input type="time" class="form-control" name="TimeEnds[0]" required>
                         </div>
                     </div>
                     <button type="button" id="addMore" class="btn btn-primary">Add More</button>
                     <button type="submit" class="btn btn-success">Submit</button>
                 </form>
 
+                <!-- Display Weekly Medication Plan -->
+                <h3>Weekly Medication Plan</h3>
+                <div>
+                    @foreach (var day in Model.WeeklyPlan)
+                    {
+                        <p>@day.Key</p>
+                        foreach (var task in day.Value)
+                        {
+                            <div>@task.MedicationName - @task.Dosage - Times: @string.Join(", ", task.Times)</div>
+                        }
+                    }
+                </div>
             </div>
         </div>
     </div>
@@ -45,10 +70,36 @@
                 // Correct the name attribute for both the select and input fields
                 newEntry.find('select').attr('name', 'SelectedMedicationNames[' + index + ']');
                 newEntry.find('input').attr('name', 'Dosage[' + index + ']');
+                newEntry.find('select[name^="Days"]').attr('name', 'Days[' + index + ']');
+                newEntry.find('input[name^="TimeStarts"]').attr('name', 'TimeStarts[' + index + ']');
+                newEntry.find('input[name^="TimeEnds"]').attr('name', 'TimeEnds[' + index + ']');
                 newEntry.find('input').val('');
                 newEntry.appendTo('#medicationContainer');
                 index++;
             });
         });
+
+        $('#medicationForm').submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GeneratePlan", "MedicalPlan")",
+                data: $(this).serialize(),
+                success: function (response) {
+                    // Update the weekly medication plan display
+                    // This part depends on how your server responds to the AJAX call
+                    // For example, you could return the updated WeeklyPlan as part of the response
+                },
+                error: function () {
+                    alert("An error occurred");
+                }
+            });
+        });
+
+
+
+
+
+
     </script>
 }
