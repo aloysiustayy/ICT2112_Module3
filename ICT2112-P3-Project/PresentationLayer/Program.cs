@@ -3,6 +3,7 @@ using DomainLayer.Interface;
 using DataSourceLayer.Data;
 using DataSourceLayer.Gateway;
 using DomainLayer.Control;
+using DataSourceLayer.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,8 @@ builder.Services.AddScoped<IAdministratorTDG, AdministratorTDG>();
 builder.Services.AddScoped<IMedicalPlanTDG, MedicalPlanTDG>();
 
 builder.Services.AddScoped<IOCR_API_TDG, OCR_API_TDG>();
+
+builder.Services.AddScoped<IOCR_Adapter, OCR_Adapter>();
 
 var app = builder.Build();
 
