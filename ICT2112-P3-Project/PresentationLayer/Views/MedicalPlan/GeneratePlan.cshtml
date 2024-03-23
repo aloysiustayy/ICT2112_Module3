@@ -1,9 +1,7 @@
-﻿@model PresentationLayer.Views.ViewModel.MedicationPlanViewModel
+﻿@model PresentationLayer.Controllers.DrugRecordViewModel
 @{
-
     ViewData["Title"] = "Generate Medical Plan";
 }
-
 
 <section>
     <div class="container">
@@ -15,46 +13,40 @@
                     <div id="medicationContainer">
                         <div class="medicationEntry">
                             <label for="medicationName">Medication Name:</label>
-                            <select class="form-control" name="SelectedMedicationNames[0]" required>
-                                @foreach (var option in Model.MedicationOptions)
+                            <select class="form-control" name="MedicationEntries[0].DrugID" required>
+                                @foreach (var drug in Model.Drugs)
                                 {
-                                    <option value="@option.Value">@option.Name</option>
+                                    <option value="@drug.DrugId">@drug.DrugName</option>
                                 }
                             </select>
 
-                            <label for="dosage">Dosage:</label>
-                            <input type="text" class="form-control" name="Dosage[0]" required>
+                            <label for="timesPerDay">Times Per Day:</label>
+                            <input type="number" class="form-control" name="MedicationEntries[0].TimesPerDay" required min="1" max="10">
 
-                            <label for="day">Day:</label>
-                            <select class="form-control" name="Days[0]" required>
-                                <option value="Sunday">Sunday</option>
-                                <option value="Monday">Monday</option>
-                                <!-- Add other days -->
+                            <label for="beforeMeals">Before Meals:</label>
+                            <select class="form-control" name="MedicationEntries[0].BeforeMeals" required>
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
                             </select>
 
-                            <label for="timeStart">Time Start:</label>
-                            <input type="time" class="form-control" name="TimeStarts[0]" required>
-
-                            <label for="timeEnd">Time End:</label>
-                            <input type="time" class="form-control" name="TimeEnds[0]" required>
+                            <label for="day">Day:</label>
+                            <select class="form-control" name="MedicationEntries[0].Day" required>
+                                <option value="Sunday">Sunday</option>
+                                <option value="Monday">Monday</option>
+                                <option value="Tuesday">Tuesday</option>
+                                <option value="Wednesday">Wednesday</option>
+                                <option value="Thursday">Thursday</option>
+                                <option value="Friday">Friday</option>
+                                <option value="Saturday">Saturday</option>
+                            </select>
                         </div>
                     </div>
+                    <div class="p-1"></div>
                     <button type="button" id="addMore" class="btn btn-primary">Add More</button>
+                    <button type="button" id="removeLast" class="btn btn-secondary">Remove Last Drug</button>
                     <button type="submit" class="btn btn-success">Submit</button>
+                    <div class="p-1"></div>
                 </form>
-
-                <!-- Display Weekly Medication Plan -->
-                <h3>Weekly Medication Plan</h3>
-                <div>
-                    @foreach (var day in Model.WeeklyPlan)
-                    {
-                        <p>@day.Key</p>
-                        foreach (var task in day.Value)
-                        {
-                            <div>@task.MedicationName - @task.Dosage - Times: @string.Join(", ", task.Times)</div>
-                        }
-                    }
-                </div>
             </div>
         </div>
     </div>
@@ -63,43 +55,30 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            var index = 1; // Start from 1 since 0 is already in the HTML
+            var index = 1; // Adjust based on the initial count of medication entries
+
             $('#addMore').click(function (e) {
                 e.preventDefault();
                 var newEntry = $('.medicationEntry:first').clone();
-                // Correct the name attribute for both the select and input fields
-                newEntry.find('select').attr('name', 'SelectedMedicationNames[' + index + ']');
-                newEntry.find('input').attr('name', 'Dosage[' + index + ']');
-                newEntry.find('select[name^="Days"]').attr('name', 'Days[' + index + ']');
-                newEntry.find('input[name^="TimeStarts"]').attr('name', 'TimeStarts[' + index + ']');
-                newEntry.find('input[name^="TimeEnds"]').attr('name', 'TimeEnds[' + index + ']');
-                newEntry.find('input').val('');
+                newEntry.find('select, input').each(function () {
+                    var nameAttr = $(this).attr('name');
+                    var newName = nameAttr.replace(/\[\d+\]/, `[${index}]`);
+                    $(this).attr('name', newName);
+                });
+                newEntry.find('input, select').val('');
                 newEntry.appendTo('#medicationContainer');
                 index++;
             });
-        });
 
-        $('#medicationForm').submit(function (e) {
-            e.preventDefault();
-            $.ajax({
-                type: "POST",
-                url: "@Url.Action("GeneratePlan", "MedicalPlan")",
-                data: $(this).serialize(),
-                success: function (response) {
-                    // Update the weekly medication plan display
-                    // This part depends on how your server responds to the AJAX call
-                    // For example, you could return the updated WeeklyPlan as part of the response
-                },
-                error: function () {
-                    alert("An error occurred");
+            $('#removeLast').click(function (e) {
+                e.preventDefault();
+                if ($('.medicationEntry').length > 1) {
+                    $('.medicationEntry:last').remove();
+                    index--;
                 }
             });
+
+          
         });
-
-
-
-
-
-
     </script>
 }

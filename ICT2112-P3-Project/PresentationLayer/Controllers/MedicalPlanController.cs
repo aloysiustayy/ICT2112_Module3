@@ -3,24 +3,30 @@ using DomainLayer.Entity;
 using DomainLayer.Interface;
 using Humanizer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using PresentationLayer.Views.ViewModel;
+using Newtonsoft.Json;
 using System.Buffers.Text;
 
 namespace PresentationLayer.Controllers
 {
 
-
-
-
     public class MedicalPlanController : Controller
     {
         private readonly ILogger<MedicalPlanController> _logger;
         private readonly IMedicalPlanTDG _medicalPlanTDG;
+        private readonly IDrugRecordTDG _drugRecordTDG;
+        private readonly IDrugTDG _drugTDG;
 
-        public MedicalPlanController(ILogger<MedicalPlanController> logger, IMedicalPlanTDG medicalPlanTDG)
+        private long patientID = 2;
+
+
+        public MedicalPlanController(ILogger<MedicalPlanController> logger, IMedicalPlanTDG medicalPlanTDG, IDrugRecordTDG drugRecordTDG, IDrugTDG drugTDG)
         {
             _logger = logger;
             _medicalPlanTDG = medicalPlanTDG;
+            _drugRecordTDG = drugRecordTDG;
+            _drugTDG = drugTDG;
         }
 
         [HttpPost]
@@ -54,18 +60,35 @@ namespace PresentationLayer.Controllers
         }
 
         [HttpPost]
-        public IActionResult GeneratePlan(MedicationViewModel model)
+        public IActionResult GeneratePlan(MedicationEntryViewModel model)
         {
             // Example of logging the received data
-            for (int i = 0; i < model.SelectedMedicationNames.Count; i++)
+            MedicalPlanBuilder planBuilder = null;
+            if (TempData["SelectedDrugs"] is string builderJson)
             {
-                _logger.LogInformation("Medication: {MedicationName}, Dosage: {Dosage}",
-                    model.SelectedMedicationNames[i], model.Dosage[i]);
+                // Deserialize the JSON string back into a MedicalPlanBuilder object
+                planBuilder = JsonConvert.DeserializeObject<MedicalPlanBuilder>(builderJson);
             }
+            List<Prescription> prescriptions = new List<Prescription>();
+            for (int i = 0; i < model.MedicationEntries.Count; i++)
+            {
+                _logger.LogInformation("Medication: {DrugID}, Day: {Day}, TimesPerDay: {TimesPerDay}, BeforeMeals: {BeforeMeals}",
+                    model.MedicationEntries[i].DrugID, model.MedicationEntries[i].Day, model.MedicationEntries[i].TimesPerDay, model.MedicationEntries[i].BeforeMeals);
+                MedicationTracker tracker = new MedicationTracker().CreateTracker(model.MedicationEntries[i].TimesPerDay, model.MedicationEntries[i].BeforeMeals, model.MedicationEntries[i].Day);
+                int drugID = Convert.ToInt32(model.MedicationEntries[i].DrugID);
+                DrugManagement dm = new DrugManagement(_drugTDG);
+                
 
-            // Additional processing here
+                Prescription prescription = new Prescription { DrugId = Convert.ToInt64(model.MedicationEntries[i].DrugID), Drug = dm.retrieveDrug(drugID),  MedicationTracker = tracker };
+               prescriptions.Add(prescription);
+            }
+            planBuilder.SetPrescriptions(prescriptions);
 
-            return RedirectToAction("Index");
+            _logger.LogInformation(planBuilder.ToString());
+            TempData["SelectedDrugs"] = JsonConvert.SerializeObject(planBuilder);
+            _logger.LogInformation(JsonConvert.SerializeObject(planBuilder));
+
+            return RedirectToAction("Plan");
         }
 
 
@@ -79,47 +102,79 @@ namespace PresentationLayer.Controllers
             return View();
         }
 
+        public IActionResult Plan()
+        {
+            PatientMedicalPlan plan = null;
+            if (TempData["SelectedDrugs"] is string builderJson)
+            {
+                // Deserialize the JSON string back into a MedicalPlanBuilder object
+                MedicalPlanBuilder x = JsonConvert.DeserializeObject<MedicalPlanBuilder>(builderJson);
+                _logger.LogInformation((string?)TempData["SelectedDrugs"]);
+                plan = x.Build();
+                _logger.LogInformation(plan.PatientId.ToString());
+            }
+            return View(plan);
+        }
+
         public async Task<IActionResult> GeneratePlan()
         {
-
-            //  var medications = await _medicalPlanTDG.GetMedicationsAsync();
-
-            // Simulating an asynchronous operation to fetch medications
-            var medicationOptions = await Task.FromResult(new List<MedicationOption>
+            DrugManagement dm = new DrugManagement(_drugTDG);
+            DrugRecordManagement ac = new DrugRecordManagement(_drugRecordTDG);
+            var drugRecordViewModel = new DrugRecordViewModel
             {
-                new MedicationOption { Name = "Acetaminophen", Value = "1" },
-                new MedicationOption { Name = "Ibuprofen", Value = "2" },
-                new MedicationOption { Name = "Amoxicillin", Value = "3" },
-                new MedicationOption { Name = "Ciprofloxacin", Value = "4" },
-                new MedicationOption { Name = "Clindamycin", Value = "5" }
-                // Add more sample medications as needed
-            });
-            var viewModel = new MedicationPlanViewModel
-            {
-                MedicationOptions = medicationOptions,
-                WeeklyPlan = new Dictionary<string, List<MedicationTask>>
-                {
-                          { "Sunday", new List<MedicationTask> { new MedicationTask { MedicationName = "Acetaminophen", Dosage = "500mg", Times = new List<string> { "08:00 AM", "08:00 PM" } } } },
-
-                }
+                Drugs = dm.retrieveAllDrug(),
+                DrugRecordDrug = ac.retrieveDrugRecordDrugs(patientID)
             };
+            
+            return View(drugRecordViewModel);
+        }
 
-            return View(viewModel);
+        public async Task<IActionResult> SelectDrugRecordDrugs()
+        {
+            DrugManagement dm = new DrugManagement(_drugTDG);
+            DrugRecordManagement ac = new DrugRecordManagement(_drugRecordTDG);
+            var test = ac.retrieveDrugRecords(patientID);
+            _logger.LogInformation("DrugRecord: {DrugRecord}", test[1].DrugRecordID);
+
+
+            var drugRecordViewModel = new DrugRecordViewModel
+            {
+                Drugs = dm.retrieveAllDrug(),
+                DrugRecordDrug = ac.retrieveDrugRecordDrugs(patientID),
+            };
+            return View(drugRecordViewModel);
+
+            // TODO: Continue, either dropdown, choose drugrecord then choose drugs, or just display all drugs combined drugrecord
         }
 
 
-        public IActionResult WeeklyMedicationPlan()
+        [HttpPost]
+        public IActionResult SelectDrugRecordDrugs(long[] SelectedDrugs)
         {
-            var viewModel = new WeeklyMedicationPlanViewModel
-            {
-                WeeklyPlan = new Dictionary<string, List<MedicationTask>>
-        {
-            { "Sunday", new List<MedicationTask> { new MedicationTask { MedicationName = "Acetaminophen", Dosage = "500mg", Times = new List<string> { "08:00 AM", "08:00 PM" } } } },
-            // Add entries for other days of the week...
-        }
-            };
+            var selectedDrugIds = SelectedDrugs; // This now contains all the selected DrugId values
 
-            return View(viewModel);
+            // Example of logging the received data
+            foreach (var drugId in selectedDrugIds)
+            {
+                _logger.LogInformation($"Selected Drug ID: {drugId}");
+            }
+            DrugManagement dm = new DrugManagement(_drugTDG);
+            List<Prescription> tracker = new List<Prescription>();
+            foreach (var drugId in selectedDrugIds)
+            {
+                tracker.Add(new Prescription { DrugId = drugId, Drug = dm.retrieveDrug((int)drugId), MedicationTracker = new MedicationTracker() });
+            }
+
+            var planBuilder = new MedicalPlanBuilder();
+            planBuilder.SetSelectedDrugs(tracker);
+
+            // Serialize the planBuilder object to a JSON string
+            var trackerJson = JsonConvert.SerializeObject(planBuilder);
+            // Store the JSON string in TempData
+            TempData["SelectedDrugs"] = trackerJson;
+
+
+            return RedirectToAction("GeneratePlan");
         }
     }
 }
