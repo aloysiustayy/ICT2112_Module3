@@ -22,19 +22,20 @@ namespace DomainLayer.Control
             return _administratorDbContext.GetAllAdministrators();
         }
 
-        /*        public void CreateAdministrativeAccount() {
-                    Administrator c = new Administrator();
-                    c.AdministratorId = 1;
-                    c.Identifier = "admin1";
-                    c.Password = "password123";
-                    c.NRIC = "123456789";
-                    c.FullName = "John Doe";
-                    c.Nationality = "US";
-                    c.PhoneNumber = 1234567890;
-                    c.EmailAddress = "admin@example.com";
-                    c.PreferredNotificationPlatform = "Email";
+        // public void CreateAdministrativeAccount()
+        // {
+        //     Administrator c = new Administrator();
+        //     c.AdministratorId = 1;
+        //     c.Identifier = "admin1";
+        //     c.Password = "password123";
+        //     c.Nric = "123456789";
+        //     c.FullName = "John Doe";
+        //     c.Nationality = "US";
+        //     c.PhoneNumber = 1234567890;
+        //     c.EmailAddress = "admin@example.com";
+        //     c.PreferredNotificationPlatform = "Email";
 
-                    _administratorDbContext.AddAdministrator(c);
-                }*/
+        //     _administratorDbContext.AddAdministrator(c);
+        // }
     }
 }

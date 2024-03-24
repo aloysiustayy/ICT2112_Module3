@@ -28,7 +28,16 @@ public partial class DataContext : DbContext
 
     public virtual DbSet<Documentation> Documentations => Set<Documentation>();
 
-    public virtual DbSet<Drug> Drugs => Set<Drug>();
+
+    public virtual DbSet<Drug> Drugs { get; set; }
+    public virtual DbSet<DrugRecord> DrugRecords { get; set; }
+    public virtual DbSet<DrugRecordDrug> DrugRecordDrugs { get; set; } // If you need direct access to the join table
+
+    // public virtual DbSet<Drug> Drugs => Set<Drug>();
+    // public virtual DbSet<DrugRecord> DrugRecords => Set<DrugRecord>();
+    // public virtual DbSet<DrugRecordDrug> DrugRecordsDrugs { get; set; } // Join table
+
+
 
     public virtual DbSet<FollowUpAppointmentRecord> FollowUpAppointmentRecords => Set<FollowUpAppointmentRecord>();
 
@@ -51,6 +60,8 @@ public partial class DataContext : DbContext
     public virtual DbSet<PatientMedicalPlan> PatientMedicalPlans => Set<PatientMedicalPlan>();
 
     public virtual DbSet<PatientMedicalRecord> PatientMedicalRecords => Set<PatientMedicalRecord>();
+
+
 
     public virtual DbSet<Photo> Photos => Set<Photo>();
 
@@ -199,13 +210,58 @@ public partial class DataContext : DbContext
             entity.Property(e => e.SafetyChecklist).HasColumnName("safetyChecklist");
         });
 
+        // Drugs configuration
         modelBuilder.Entity<Drug>(entity =>
         {
+            entity.HasKey(e => e.DrugId);
             entity.Property(e => e.DrugId).HasColumnName("drugId");
             entity.Property(e => e.DrugInformation).HasColumnName("drugInformation");
             entity.Property(e => e.DrugName).HasColumnName("drugName");
             entity.Property(e => e.Inventory).HasColumnName("inventory");
         });
+
+        modelBuilder.Entity<DrugRecord>(entity =>
+        {
+            entity.HasKey(e => e.DrugRecordID); // Primary key
+            entity.Property(e => e.DrugRecordID).ValueGeneratedOnAdd(); // Ensures auto-increment is on for DrugRecordID
+            entity.Property(e => e.PatientID)
+                .HasColumnName("patientId").ValueGeneratedNever();
+            entity.Property(e => e.DrugDescription).HasColumnName("drugRecordDesc").IsRequired(false);
+
+            // If PatientID is a foreign key to another table, configure the relationship here.
+            // Example: .HasOne<OtherEntity>().WithMany().HasForeignKey(dr => dr.PatientID);
+        });
+
+        modelBuilder.Entity<DrugRecordDrug>()
+       .HasKey(dr => new { dr.DrugRecordDrugID }); // Define the composite key
+
+        //TODO: Change DrugRecordID with PatientID and use PatientID to retrieve all drugs. DrugID is not PK, its not unique in DrugRecordDrug
+
+        modelBuilder.Entity<DrugRecordDrug>()
+            .HasOne(dr => dr.Drug) // Drug side of the relationship
+            .WithMany(d => d.DrugRecordDrugs) // Navigation property in Drug
+            .HasForeignKey(dr => dr.DrugId); // Foreign key in the join table
+
+
+
+        modelBuilder.Entity<DrugRecordDrug>()
+                    .HasOne(dr => dr.Drug) // Drug side of the relationship
+                    .WithMany(d => d.DrugRecordDrugs) // Navigation property in Drug
+                    .HasForeignKey(dr => dr.DrugId); // Foreign key in the join table
+
+
+        modelBuilder.Entity<DrugRecordDrug>()
+            .HasOne(dr => dr.DrugRecord) // DrugRecord side of the relationship
+            .WithMany(p => p.DrugRecordDrugs) // Navigation property in DrugRecord
+            .HasForeignKey(dr => dr.DrugRecordID); // Foreign key in the join table
+
+        modelBuilder.Entity<DrugRecordDrug>().ToTable("DrugRecordDrugs"); // Explicitly setting the table name
+        // Ensure table names for other entities are correctly defined if not matching class names
+        modelBuilder.Entity<Drug>().ToTable("Drugs");
+        modelBuilder.Entity<DrugRecord>().ToTable("DrugRecords");
+
+
+
 
         modelBuilder.Entity<FollowUpAppointmentRecord>(entity =>
         {

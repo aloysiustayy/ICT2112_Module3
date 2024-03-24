@@ -3,20 +3,30 @@ using DomainLayer.Entity;
 using DomainLayer.Interface;
 using Humanizer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using PresentationLayer.Views.ViewModel;
+using Newtonsoft.Json;
 using System.Buffers.Text;
 
 namespace PresentationLayer.Controllers
 {
+
     public class MedicalPlanController : Controller
     {
         private readonly ILogger<MedicalPlanController> _logger;
         private readonly IMedicalPlanTDG _medicalPlanTDG;
-        private readonly IOCR_API_TDG _iOCR_API_TDG;
+        private readonly IDrugRecordTDG _drugRecordTDG;
+        private readonly IDrugTDG _drugTDG;
 
-        public MedicalPlanController(ILogger<MedicalPlanController> logger, IMedicalPlanTDG medicalPlanTDG, IOCR_API_TDG iOCR_API_TDG)
+        private long patientID = 2;
+
+
+        public MedicalPlanController(ILogger<MedicalPlanController> logger, IMedicalPlanTDG medicalPlanTDG, IDrugRecordTDG drugRecordTDG, IDrugTDG drugTDG, IOCR_API_TDG iOCR_API_TDG)
         {
             _logger = logger;
             _medicalPlanTDG = medicalPlanTDG;
+            _drugRecordTDG = drugRecordTDG;
+            _drugTDG = drugTDG;
             _iOCR_API_TDG = iOCR_API_TDG;
         }
 
@@ -52,15 +62,35 @@ namespace PresentationLayer.Controllers
         }
 
         [HttpPost]
-        public IActionResult GeneratePlan(long planId)
+        public IActionResult GeneratePlan(MedicationEntryViewModel model)
         {
-            // Here, you'd use the planId to generate a plan
-            // This is a placeholder for your existing logic
-            // For now, we'll just redirect to the Index view as a placeholder
-            MedicalPlanManagement medicalPlanManagement = new MedicalPlanManagement(_medicalPlanTDG);
-            Console.WriteLine("Generating plan for planId: " + planId);
-            _logger.LogInformation("Generating plan for plan ID {PlanId}", planId);
-            return RedirectToAction("Index");
+            // Example of logging the received data
+            MedicalPlanBuilder planBuilder = null;
+            if (TempData["SelectedDrugs"] is string builderJson)
+            {
+                // Deserialize the JSON string back into a MedicalPlanBuilder object
+                planBuilder = JsonConvert.DeserializeObject<MedicalPlanBuilder>(builderJson);
+            }
+            List<Prescription> prescriptions = new List<Prescription>();
+            for (int i = 0; i < model.MedicationEntries.Count; i++)
+            {
+                _logger.LogInformation("Medication: {DrugID}, Day: {Day}, TimesPerDay: {TimesPerDay}, BeforeMeals: {BeforeMeals}",
+                    model.MedicationEntries[i].DrugID, model.MedicationEntries[i].Day, model.MedicationEntries[i].TimesPerDay, model.MedicationEntries[i].BeforeMeals);
+                MedicationTracker tracker = new MedicationTracker().CreateTracker(model.MedicationEntries[i].TimesPerDay, model.MedicationEntries[i].BeforeMeals, model.MedicationEntries[i].Day);
+                int drugID = Convert.ToInt32(model.MedicationEntries[i].DrugID);
+                DrugManagement dm = new DrugManagement(_drugTDG);
+                
+
+                Prescription prescription = new Prescription { DrugId = Convert.ToInt64(model.MedicationEntries[i].DrugID), Drug = dm.retrieveDrug(drugID),  MedicationTracker = tracker };
+               prescriptions.Add(prescription);
+            }
+            planBuilder.SetPrescriptions(prescriptions);
+
+            _logger.LogInformation(planBuilder.ToString());
+            TempData["SelectedDrugs"] = JsonConvert.SerializeObject(planBuilder);
+            _logger.LogInformation(JsonConvert.SerializeObject(planBuilder));
+
+            return RedirectToAction("Plan");
         }
 
 
@@ -74,11 +104,79 @@ namespace PresentationLayer.Controllers
             return View();
         }
 
-        public IActionResult GeneratePlan()
+        public IActionResult Plan()
         {
-            // Simply returns the view with the form
-            return View();
+            PatientMedicalPlan plan = null;
+            if (TempData["SelectedDrugs"] is string builderJson)
+            {
+                // Deserialize the JSON string back into a MedicalPlanBuilder object
+                MedicalPlanBuilder x = JsonConvert.DeserializeObject<MedicalPlanBuilder>(builderJson);
+                _logger.LogInformation((string?)TempData["SelectedDrugs"]);
+                plan = x.Build();
+                _logger.LogInformation(plan.PatientId.ToString());
+            }
+            return View(plan);
         }
 
+        public async Task<IActionResult> GeneratePlan()
+        {
+            DrugManagement dm = new DrugManagement(_drugTDG);
+            DrugRecordManagement ac = new DrugRecordManagement(_drugRecordTDG);
+            var drugRecordViewModel = new DrugRecordViewModel
+            {
+                Drugs = dm.retrieveAllDrug(),
+                DrugRecordDrug = ac.retrieveDrugRecordDrugs(patientID)
+            };
+            
+            return View(drugRecordViewModel);
+        }
+
+        public async Task<IActionResult> SelectDrugRecordDrugs()
+        {
+            DrugManagement dm = new DrugManagement(_drugTDG);
+            DrugRecordManagement ac = new DrugRecordManagement(_drugRecordTDG);
+            var test = ac.retrieveDrugRecords(patientID);
+            _logger.LogInformation("DrugRecord: {DrugRecord}", test[1].DrugRecordID);
+
+
+            var drugRecordViewModel = new DrugRecordViewModel
+            {
+                Drugs = dm.retrieveAllDrug(),
+                DrugRecordDrug = ac.retrieveDrugRecordDrugs(patientID),
+            };
+            return View(drugRecordViewModel);
+
+            // TODO: Continue, either dropdown, choose drugrecord then choose drugs, or just display all drugs combined drugrecord
+        }
+
+
+        [HttpPost]
+        public IActionResult SelectDrugRecordDrugs(long[] SelectedDrugs)
+        {
+            var selectedDrugIds = SelectedDrugs; // This now contains all the selected DrugId values
+
+            // Example of logging the received data
+            foreach (var drugId in selectedDrugIds)
+            {
+                _logger.LogInformation($"Selected Drug ID: {drugId}");
+            }
+            DrugManagement dm = new DrugManagement(_drugTDG);
+            List<Prescription> tracker = new List<Prescription>();
+            foreach (var drugId in selectedDrugIds)
+            {
+                tracker.Add(new Prescription { DrugId = drugId, Drug = dm.retrieveDrug((int)drugId), MedicationTracker = new MedicationTracker() });
+            }
+
+            var planBuilder = new MedicalPlanBuilder();
+            planBuilder.SetSelectedDrugs(tracker);
+
+            // Serialize the planBuilder object to a JSON string
+            var trackerJson = JsonConvert.SerializeObject(planBuilder);
+            // Store the JSON string in TempData
+            TempData["SelectedDrugs"] = trackerJson;
+
+
+            return RedirectToAction("GeneratePlan");
+        }
     }
 }

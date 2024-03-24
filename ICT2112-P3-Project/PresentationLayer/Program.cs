@@ -21,6 +21,10 @@ builder.Services.AddScoped<IOCR_API_TDG, OCR_API_TDG>();
 
 builder.Services.AddScoped<IOCR_Adapter, OCR_Adapter>();
 
+builder.Services.AddScoped<IDrugRecordTDG, DrugRecordTDG>();
+
+builder.Services.AddScoped<IDrugTDG, DrugTDG>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

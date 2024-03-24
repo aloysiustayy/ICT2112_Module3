@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34607.119
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DomainLayer", "DomainLayer\DomainLayer.csproj", "{B3ABF369-A4C9-4322-822A-3E448D5A4497}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainLayer", "DomainLayer\DomainLayer.csproj", "{B3ABF369-A4C9-4322-822A-3E448D5A4497}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataSourceLayer", "DataSourceLayer\DataSourceLayer.csproj", "{6BA6C05E-92AB-43E9-B10A-459AEF3DBCFF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataSourceLayer", "DataSourceLayer\DataSourceLayer.csproj", "{6BA6C05E-92AB-43E9-B10A-459AEF3DBCFF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PresentationLayer", "PresentationLayer\PresentationLayer.csproj", "{B42FAAF5-894D-4384-857C-52F6B2F35D13}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PresentationLayer", "PresentationLayer\PresentationLayer.csproj", "{B42FAAF5-894D-4384-857C-52F6B2F35D13}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
