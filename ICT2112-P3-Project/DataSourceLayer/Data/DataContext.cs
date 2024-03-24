@@ -482,7 +482,6 @@ public partial class DataContext : DbContext
             entity.Property(mt => mt.TrackingId).HasColumnName("trackingId");
             entity.Property(mt => mt.TimesPerDay).HasColumnName("timesPerDay");
             entity.Property(mt => mt.BeforeMeals).HasColumnName("beforeMeals");
-            entity.Property(mt => mt.Day).HasColumnName("day");
             entity.Property(mt => mt.HasNotified).HasColumnName("hasNotified");
         });
 

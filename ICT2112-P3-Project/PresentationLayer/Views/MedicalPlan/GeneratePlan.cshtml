@@ -28,19 +28,13 @@
                                 <option value="true">Yes</option>
                                 <option value="false">No</option>
                             </select>
-
-                            <label for="day">Day:</label>
-                            <select class="form-control" name="MedicationEntries[0].Day" required>
-                                <option value="Sunday">Sunday</option>
-                                <option value="Monday">Monday</option>
-                                <option value="Tuesday">Tuesday</option>
-                                <option value="Wednesday">Wednesday</option>
-                                <option value="Thursday">Thursday</option>
-                                <option value="Friday">Friday</option>
-                                <option value="Saturday">Saturday</option>
-                            </select>
                         </div>
                     </div>
+                    <label for="trackPlan">Track Plan:</label>
+                    <select class="form-control" name="TrackPlan" required>
+                        <option value="true">Yes</option>
+                        <option value="false">No</option>
+                    </select>
                     <div class="p-1"></div>
                     <button type="button" id="addMore" class="btn btn-primary">Add More</button>
                     <button type="button" id="removeLast" class="btn btn-secondary">Remove Last Drug</button>

@@ -16,42 +16,4 @@ public partial class PatientMedicalPlan
     public virtual ICollection<Prescription> Prescriptions { get; set; } = new List<Prescription>();
     public virtual ICollection<DischargeRecord> DischargeRecords { get; set; } = new List<DischargeRecord>();
     public virtual Patient Patient { get; set; } = null!;
-
-    public static MedicationTracker CreateTracking(int timesPerDay, bool beforeMeals, string day)
-    {
-        var newTracker = new MedicationTracker
-        {
-            TimesPerDay = timesPerDay,
-            BeforeMeals = beforeMeals,
-            Day = day
-        };
-        return newTracker;
-    }
-
-    public void AddToPrescription(Drug drug, long planId, int timesPerDay, bool beforeMeals, string day)
-    {
-        // Assuming that the Drug entity has an ID property
-        var existingPrescription = Prescriptions.FirstOrDefault(p => p.DrugId == drug.DrugId);
-
-        if (existingPrescription == null)
-        {
-            // If the drug is not in the prescription, create a new tracker and prescription
-            var newTracker = CreateTracking(timesPerDay, beforeMeals, day);
-            var newPrescription = new Prescription
-            {
-                DrugId = drug.DrugId,
-                MedicationTrackerId = newTracker.TrackingId,
-                PatientMedicalPlanId = planId,
-            };
-            Prescriptions.Add(newPrescription);
-        }
-        else
-        {
-            // If the drug is already in the prescription, update the existing tracker
-            var existingTracker = existingPrescription.MedicationTracker;
-            existingTracker.TimesPerDay = timesPerDay;
-            existingTracker.BeforeMeals = beforeMeals;
-            existingTracker.Day = day;
-        }
-    }
 }

@@ -13,9 +13,6 @@ public partial class Drug
 
     public long Inventory { get; set; }
 
-    public virtual ICollection<PatientMedicalPlan> PatientMedicalPlans { get; set; } = new List<PatientMedicalPlan>();
-    public virtual ICollection<MedicationTracker> MedicationTracker { get; set; } = new List<MedicationTracker>();
     public virtual ICollection<Prescription> Prescriptions { get; set; } = new List<Prescription>();
-    public virtual ICollection<DrugRecord> DrugRecords { get; set; } = new List<DrugRecord>();
     public ICollection<DrugRecordDrug> DrugRecordDrugs { get; set; }
 }

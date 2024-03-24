@@ -337,9 +337,6 @@ namespace DataSourceLayer.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("drugRecordDesc");
 
-                    b.Property<long>("DrugID")
-                        .HasColumnType("INTEGER");
-
                     b.Property<long>("PatientID")
                         .HasColumnType("INTEGER")
                         .HasColumnName("patientId");
@@ -464,14 +461,6 @@ namespace DataSourceLayer.Migrations
                         .HasColumnType("INTEGER")
                         .HasColumnName("beforeMeals");
 
-                    b.Property<string>("Day")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasColumnName("day");
-
-                    b.Property<long?>("DrugId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<DateTime>("HasNotified")
                         .HasColumnType("TEXT")
                         .HasColumnName("hasNotified");
@@ -481,8 +470,6 @@ namespace DataSourceLayer.Migrations
                         .HasColumnName("timesPerDay");
 
                     b.HasKey("TrackingId");
-
-                    b.HasIndex("DrugId");
 
                     b.ToTable("Medication Tracker", (string)null);
                 });
@@ -805,9 +792,6 @@ namespace DataSourceLayer.Migrations
                         .HasColumnType("INTEGER")
                         .HasColumnName("assignedByNurseId");
 
-                    b.Property<long?>("DrugId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<long>("PatientId")
                         .HasColumnType("INTEGER")
                         .HasColumnName("patientId");
@@ -830,8 +814,6 @@ namespace DataSourceLayer.Migrations
                         .HasColumnName("trackPlan");
 
                     b.HasKey("PlanId");
-
-                    b.HasIndex("DrugId");
 
                     b.HasIndex("PatientId");
 
@@ -1179,21 +1161,6 @@ namespace DataSourceLayer.Migrations
                     b.ToTable("Safety Checklist Assessment", (string)null);
                 });
 
-            modelBuilder.Entity("DrugDrugRecord", b =>
-                {
-                    b.Property<long>("DrugRecordsDrugRecordID")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<long>("DrugsDrugId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("DrugRecordsDrugRecordID", "DrugsDrugId");
-
-                    b.HasIndex("DrugsDrugId");
-
-                    b.ToTable("DrugDrugRecord");
-                });
-
             modelBuilder.Entity("DomainLayer.Entity.Audit", b =>
                 {
                     b.HasOne("DomainLayer.Entity.Administrator", "ActionByNavigation")
@@ -1285,13 +1252,6 @@ namespace DataSourceLayer.Migrations
                     b.Navigation("Patient");
                 });
 
-            modelBuilder.Entity("DomainLayer.Entity.MedicationTracker", b =>
-                {
-                    b.HasOne("DomainLayer.Entity.Drug", null)
-                        .WithMany("MedicationTracker")
-                        .HasForeignKey("DrugId");
-                });
-
             modelBuilder.Entity("DomainLayer.Entity.NotificationLog", b =>
                 {
                     b.HasOne("DomainLayer.Entity.Administrator", "AdministratorEmailAddressNavigation")
@@ -1322,10 +1282,6 @@ namespace DataSourceLayer.Migrations
 
             modelBuilder.Entity("DomainLayer.Entity.PatientMedicalPlan", b =>
                 {
-                    b.HasOne("DomainLayer.Entity.Drug", null)
-                        .WithMany("PatientMedicalPlans")
-                        .HasForeignKey("DrugId");
-
                     b.HasOne("DomainLayer.Entity.Patient", "Patient")
                         .WithMany("PatientMedicalPlans")
                         .HasForeignKey("PatientId")
@@ -1456,21 +1412,6 @@ namespace DataSourceLayer.Migrations
                     b.Navigation("PatientCaregiver");
                 });
 
-            modelBuilder.Entity("DrugDrugRecord", b =>
-                {
-                    b.HasOne("DomainLayer.Entity.DrugRecord", null)
-                        .WithMany()
-                        .HasForeignKey("DrugRecordsDrugRecordID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DomainLayer.Entity.Drug", null)
-                        .WithMany()
-                        .HasForeignKey("DrugsDrugId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("DomainLayer.Entity.Administrator", b =>
                 {
                     b.Navigation("Audits");
@@ -1491,10 +1432,6 @@ namespace DataSourceLayer.Migrations
             modelBuilder.Entity("DomainLayer.Entity.Drug", b =>
                 {
                     b.Navigation("DrugRecordDrugs");
-
-                    b.Navigation("MedicationTracker");
-
-                    b.Navigation("PatientMedicalPlans");
 
                     b.Navigation("Prescriptions");
                 });

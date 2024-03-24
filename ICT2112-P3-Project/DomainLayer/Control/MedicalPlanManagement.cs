@@ -26,7 +26,7 @@ namespace DomainLayer.Control
         {
             throw new NotImplementedException();
         }
-        public void AddToPrescription(Drug drug, PatientMedicalPlan medicalPlan, int timesPerDay, bool beforeMeals, string day)
+        public void AddToPrescription(Drug drug, PatientMedicalPlan medicalPlan, int timesPerDay, bool beforeMeals)
         {
             var existingPrescription = medicalPlan.Prescriptions.FirstOrDefault(p => p.DrugId == drug.DrugId);
 
@@ -34,7 +34,7 @@ namespace DomainLayer.Control
             {
                 MedicationTracker tracker = new();
                 // If the drug is not in the prescription, create a new tracker and prescription
-                var newTracker = tracker.CreateTracker(timesPerDay, beforeMeals, day);
+                var newTracker = tracker.CreateTracker(timesPerDay, beforeMeals);
                 var newPrescription = new Prescription
                 {
                     DrugId = drug.DrugId,
@@ -49,7 +49,6 @@ namespace DomainLayer.Control
                 var existingTracker = existingPrescription.MedicationTracker;
                 existingTracker.TimesPerDay = timesPerDay;
                 existingTracker.BeforeMeals = beforeMeals;
-                existingTracker.Day = day;
             }
         }
         public async Task<string> ExecuteOCR(string base64EncodedImage)

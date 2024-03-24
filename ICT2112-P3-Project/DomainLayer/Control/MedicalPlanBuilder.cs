@@ -38,7 +38,6 @@ namespace DomainLayer.Control
             p.PatientId = 2;
             p.PlanStart = DateTime.Now;
             p.PlanEnd = DateTime.Now.AddMonths(1);
-            p.TrackPlan = false;
             p.PlanNotes = "This is a test plan";
             p.AssignedByNurseId = 1;
 

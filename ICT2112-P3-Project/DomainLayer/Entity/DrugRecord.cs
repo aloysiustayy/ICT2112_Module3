@@ -11,11 +11,9 @@ public partial class DrugRecord
     public long DrugRecordID { get; set; }
 
     public long PatientID { get; set; }
-    public long DrugID { get; set; } // this is probably not needed.. cause drugid is taken from DrugRecordDrug
     public string? DrugDescription { get; set; }
 
     // This is foreign key
-    public virtual ICollection<Drug> Drugs { get; set; } = new List<Drug>();
     public ICollection<DrugRecordDrug> DrugRecordDrugs { get; set; }
 
     // Constructor

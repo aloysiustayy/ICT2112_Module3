@@ -17,6 +17,7 @@ namespace PresentationLayer.Controllers
         private readonly IMedicalPlanTDG _medicalPlanTDG;
         private readonly IDrugRecordTDG _drugRecordTDG;
         private readonly IDrugTDG _drugTDG;
+        private readonly IOCR_API_TDG _iOCR_API_TDG;
 
         private long patientID = 2;
 
@@ -74,17 +75,20 @@ namespace PresentationLayer.Controllers
             List<Prescription> prescriptions = new List<Prescription>();
             for (int i = 0; i < model.MedicationEntries.Count; i++)
             {
-                _logger.LogInformation("Medication: {DrugID}, Day: {Day}, TimesPerDay: {TimesPerDay}, BeforeMeals: {BeforeMeals}",
-                    model.MedicationEntries[i].DrugID, model.MedicationEntries[i].Day, model.MedicationEntries[i].TimesPerDay, model.MedicationEntries[i].BeforeMeals);
-                MedicationTracker tracker = new MedicationTracker().CreateTracker(model.MedicationEntries[i].TimesPerDay, model.MedicationEntries[i].BeforeMeals, model.MedicationEntries[i].Day);
-                int drugID = Convert.ToInt32(model.MedicationEntries[i].DrugID);
-                DrugManagement dm = new DrugManagement(_drugTDG);
-                
+                _logger.LogInformation("Medication: {DrugID}, TimesPerDay: {TimesPerDay}, BeforeMeals: {BeforeMeals}",
+                    model.MedicationEntries[i].DrugID, model.MedicationEntries[i].TimesPerDay, model.MedicationEntries[i].BeforeMeals);
+                if (model.TrackPlan == true)
+                {
+                    MedicationTracker tracker = new MedicationTracker().CreateTracker(model.MedicationEntries[i].TimesPerDay, model.MedicationEntries[i].BeforeMeals);
+                    int drugID = Convert.ToInt32(model.MedicationEntries[i].DrugID);
+                    DrugManagement dm = new DrugManagement(_drugTDG);
 
-                Prescription prescription = new Prescription { DrugId = Convert.ToInt64(model.MedicationEntries[i].DrugID), Drug = dm.retrieveDrug(drugID),  MedicationTracker = tracker };
-               prescriptions.Add(prescription);
+
+                    Prescription prescription = new Prescription { DrugId = Convert.ToInt64(model.MedicationEntries[i].DrugID), Drug = dm.retrieveDrug(drugID), MedicationTracker = tracker };
+                    prescriptions.Add(prescription);
+                    planBuilder.SetPrescriptions(prescriptions);
+                }
             }
-            planBuilder.SetPrescriptions(prescriptions);
 
             _logger.LogInformation(planBuilder.ToString());
             TempData["SelectedDrugs"] = JsonConvert.SerializeObject(planBuilder);
