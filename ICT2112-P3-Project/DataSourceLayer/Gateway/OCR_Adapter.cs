@@ -28,5 +28,20 @@ namespace DataSourceLayer.Gateway
             var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
             return content;
         }
+
+        public string ConvertFromJSON(string jsonResponse)
+        {
+            try
+            {
+                var responseObject = JsonConvert.DeserializeObject<dynamic>(jsonResponse);
+                var text = (string)responseObject.responses[0].fullTextAnnotation.text;
+                return text;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while parsing JSON response: {ex.Message}");
+                return null;
+            }
+        }
     }
 }

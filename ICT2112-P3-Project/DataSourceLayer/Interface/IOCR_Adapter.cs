@@ -9,5 +9,6 @@ namespace DataSourceLayer.Interface
     public interface IOCR_Adapter
     {
         HttpContent ConvertToJSON(string base64EncodedImage);
+        string ConvertFromJSON(string jsonResponse);
     }
 }
