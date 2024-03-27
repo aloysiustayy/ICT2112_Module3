@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using PresentationLayer.Views.ViewModel;
 using Newtonsoft.Json;
 using System.Buffers.Text;
+using Microsoft.AspNetCore.Razor.TagHelpers;
 
 namespace PresentationLayer.Controllers
 {
@@ -15,6 +16,8 @@ namespace PresentationLayer.Controllers
     {
         private readonly ILogger<MedicalPlanController> _logger;
         private readonly IMedicalPlanTDG _medicalPlanTDG;
+        private readonly IMedicationTrackerTDG _medicationTrackerTDG;
+        private readonly IPrescriptionTDG _prescriptionTDG;
         private readonly IDrugRecordTDG _drugRecordTDG;
         private readonly IDrugTDG _drugTDG;
         private readonly IOCR_API_TDG _iOCR_API_TDG;
@@ -22,13 +25,16 @@ namespace PresentationLayer.Controllers
         private long patientID = 2;
 
 
-        public MedicalPlanController(ILogger<MedicalPlanController> logger, IMedicalPlanTDG medicalPlanTDG, IDrugRecordTDG drugRecordTDG, IDrugTDG drugTDG, IOCR_API_TDG iOCR_API_TDG)
+        public MedicalPlanController(ILogger<MedicalPlanController> logger, IMedicalPlanTDG medicalPlanTDG, IDrugRecordTDG drugRecordTDG, IDrugTDG drugTDG, 
+            IOCR_API_TDG iOCR_API_TDG, IMedicationTrackerTDG medicationTrackerTDG, IPrescriptionTDG prescriptionTDG)
         {
             _logger = logger;
             _medicalPlanTDG = medicalPlanTDG;
             _drugRecordTDG = drugRecordTDG;
             _drugTDG = drugTDG;
             _iOCR_API_TDG = iOCR_API_TDG;
+            _medicationTrackerTDG = medicationTrackerTDG;
+            _prescriptionTDG = prescriptionTDG;
         }
 
         [HttpPost]
@@ -63,36 +69,48 @@ namespace PresentationLayer.Controllers
         }
 
         [HttpPost]
-        public IActionResult GeneratePlan(MedicationEntryViewModel model)
+        public async Task<IActionResult> GeneratePlan(MedicationEntryViewModel model)
         {
             // Example of logging the received data
-            MedicalPlanBuilder planBuilder = null;
+            MedicalPlanBuilder planBuilder = new MedicalPlanBuilder();
             if (TempData["SelectedDrugs"] is string builderJson)
             {
                 // Deserialize the JSON string back into a MedicalPlanBuilder object
                 planBuilder = JsonConvert.DeserializeObject<MedicalPlanBuilder>(builderJson);
             }
+            planBuilder.SetPlanDetails(model.TrackPlan, model.PlanNotes, model.PlanStart, model.PlanEnd, model.PatientID, model.AssignedByNurseID);
+
+            MedicalPlanManagement medicalPlanManagement = new MedicalPlanManagement(_medicalPlanTDG);
+
+            // Create a new plan for creation of prescription
+            var newPlan = await medicalPlanManagement.CreateMedicalPlan(model.PatientID, model.PlanNotes, model.PlanStart, model.PlanEnd, model.TrackPlan, model.AssignedByNurseID);
+            var planId = newPlan.PlanId;
+
             List<Prescription> prescriptions = new List<Prescription>();
-            for (int i = 0; i < model.MedicationEntries.Count; i++)
+            if (model.TrackPlan == true)
             {
-                _logger.LogInformation("Medication: {DrugID}, TimesPerDay: {TimesPerDay}, BeforeMeals: {BeforeMeals}",
-                    model.MedicationEntries[i].DrugID, model.MedicationEntries[i].TimesPerDay, model.MedicationEntries[i].BeforeMeals);
-                if (model.TrackPlan == true)
+                // Instantiate the two control classes
+                MedicationTrackerManagement medicationTrackerManagement = new MedicationTrackerManagement(_medicationTrackerTDG);
+                PrescriptionManagement prescriptionManagement = new PrescriptionManagement(_prescriptionTDG);
+                for (int i = 0; i < model.MedicationEntries.Count; i++)
                 {
-                    MedicationTracker tracker = new MedicationTracker().CreateTracker(model.MedicationEntries[i].TimesPerDay, model.MedicationEntries[i].BeforeMeals);
+                    _logger.LogInformation("Medication: {DrugID}, TimesPerDay: {TimesPerDay}, BeforeMeals: {BeforeMeals}",
+                        model.MedicationEntries[i].DrugID, model.MedicationEntries[i].TimesPerDay, model.MedicationEntries[i].BeforeMeals);
+                    // MedicationTracker tracker = new MedicationTracker().CreateTracker(model.MedicationEntries[i].TimesPerDay, model.MedicationEntries[i].BeforeMeals);
+                    var newTracker = await medicationTrackerManagement.CreateMedicationTracker(model.MedicationEntries[i].TimesPerDay, model.MedicationEntries[i].BeforeMeals);
+                    var trackerId = newTracker.TrackingId;
+
                     int drugID = Convert.ToInt32(model.MedicationEntries[i].DrugID);
-                    DrugManagement dm = new DrugManagement(_drugTDG);
 
-
-                    Prescription prescription = new Prescription { DrugId = Convert.ToInt64(model.MedicationEntries[i].DrugID), Drug = dm.retrieveDrug(drugID), MedicationTracker = tracker };
+                    // Prescription prescription = new Prescription { DrugId = drugID, MedicationTrackerId = trackerId, PatientMedicalPlanId = planId };
+                    var prescription = await prescriptionManagement.CreatePrescription(planId, trackerId, drugID);
                     prescriptions.Add(prescription);
                     planBuilder.SetPrescriptions(prescriptions);
                 }
+                /*_logger.LogInformation(planBuilder.ToString());
+                TempData["SelectedDrugs"] = JsonConvert.SerializeObject(planBuilder);
+                _logger.LogInformation(JsonConvert.SerializeObject(planBuilder));*/
             }
-
-            _logger.LogInformation(planBuilder.ToString());
-            TempData["SelectedDrugs"] = JsonConvert.SerializeObject(planBuilder);
-            _logger.LogInformation(JsonConvert.SerializeObject(planBuilder));
 
             return RedirectToAction("Plan");
         }
@@ -111,13 +129,15 @@ namespace PresentationLayer.Controllers
         public IActionResult Plan()
         {
             PatientMedicalPlan plan = null;
+            // MedicalPlanManagement medicalPlanManagement = new MedicalPlanManagement(_medicalPlanTDG);
             if (TempData["SelectedDrugs"] is string builderJson)
             {
                 // Deserialize the JSON string back into a MedicalPlanBuilder object
                 MedicalPlanBuilder x = JsonConvert.DeserializeObject<MedicalPlanBuilder>(builderJson);
                 _logger.LogInformation((string?)TempData["SelectedDrugs"]);
                 plan = x.Build();
-                _logger.LogInformation(plan.PatientId.ToString());
+                // medicalPlanManagement.CreateMedicalPlan(plan);
+                // _logger.LogInformation(plan.PatientId.ToString());
             }
             return View(plan);
         }

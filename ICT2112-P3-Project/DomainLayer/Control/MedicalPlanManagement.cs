@@ -61,5 +61,59 @@ namespace DomainLayer.Control
         {
             throw new NotImplementedException();
         }
+
+        public async Task<long> CreateEmptyMedicalPlanAsync()
+        {
+            var newPlan = new PatientMedicalPlan
+            {
+                PlanNotes = "",
+                PlanStart = DateTime.Now,
+                PlanEnd = DateTime.Now
+            };
+            await _medicalPlanTDG.CreateMedicalPlanAsync(newPlan);
+            return newPlan.PlanId;
+        }
+
+        public async Task<PatientMedicalPlan> CreateMedicalPlan(long patientId, string planNotes, DateTime planStart, DateTime planEnd, bool trackPlan, long assignedByNurseID) 
+        {
+            var newPlan = new PatientMedicalPlan
+            {
+                PatientId = patientId,
+                PlanNotes = planNotes,
+                PlanStart = planStart,
+                PlanEnd = planEnd,
+                TrackPlan = trackPlan,
+                AssignedByNurseId = assignedByNurseID
+            };
+            await _medicalPlanTDG.CreateMedicalPlanAsync(newPlan);
+            return newPlan;
+        }
+
+        public void UpdateMedicalPlan(PatientMedicalPlan existingPlan)
+        {
+            _medicalPlanTDG.UpdateMedicalPlanAsync(existingPlan);
+        }
+    }
+
+    public class PrescriptionManagement
+    {
+        private readonly IPrescriptionTDG _prescriptionTDG;
+
+        public PrescriptionManagement (IPrescriptionTDG prescriptionTDG)
+        {
+            _prescriptionTDG = prescriptionTDG;
+        }
+
+        public async Task<Prescription> CreatePrescription (long medicalPlanId, long medicationTrackerId, long drugId)
+        {
+            var newPrescription = new Prescription
+            {
+                PatientMedicalPlanId = medicalPlanId,
+                MedicationTrackerId = medicationTrackerId,
+                DrugId = drugId
+            };
+            await _prescriptionTDG.CreatePrescriptionAsync(newPrescription);
+            return newPrescription;
+        }
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -51,6 +52,42 @@ namespace DataSourceLayer.Gateway
             if (existingPlan != null)
             {
                 _context.PatientMedicalPlans.Remove(existingPlan);
+                await _context.SaveChangesAsync();
+            }
+        }
+    }
+    public class PrescriptionTDG : IPrescriptionTDG
+    {
+        private readonly DataContext _context;
+        public PrescriptionTDG(DataContext context)
+        {
+            _context = context;
+        }
+        public async Task<Prescription> GetPrescriptionByIdsAsync(long medicalPlanId, long medicationTrackerId, long drugId)
+        {
+            return await _context.Prescriptions.FindAsync(medicalPlanId, medicationTrackerId, drugId);
+        }
+
+        public async Task CreatePrescriptionAsync(Prescription prescription)
+        {
+            await _context.Prescriptions.AddAsync(prescription);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdatePrescriptionAsync(Prescription prescription)
+        {
+            _context.Prescriptions.Update(prescription);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeletePrescriptionAsync(long medicalPlanId, long medicationTrackerId, long drugId)
+        {
+            var prescription = await _context.Prescriptions
+                .FindAsync(medicalPlanId, medicationTrackerId, drugId);
+
+            if (prescription != null)
+            {
+                _context.Prescriptions.Remove(prescription);
                 await _context.SaveChangesAsync();
             }
         }

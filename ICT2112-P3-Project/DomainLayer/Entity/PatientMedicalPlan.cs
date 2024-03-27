@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace DomainLayer.Entity;
 
 public partial class PatientMedicalPlan
 {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long PlanId { get; set; }
-    public long AccountId { get; set; }
     public long PatientId { get; set; }
     public string PlanNotes { get; set; } = null!;
     public DateTime PlanStart { get; set; }

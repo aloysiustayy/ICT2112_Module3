@@ -13,6 +13,12 @@ namespace DataSourceLayer.Gateway
     public class MedicationTrackerTDG : IMedicationTrackerTDG
     {
         private readonly DataContext _context;
+
+        public MedicationTrackerTDG(DataContext context)
+        {
+            _context = context;
+        }
+
         public async Task CreateMedicationTrackerAsync(MedicationTracker newTracker)
         {
             await _context.MedicationTrackers.AddAsync(newTracker);

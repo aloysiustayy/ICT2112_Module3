@@ -17,7 +17,11 @@ builder.Services.AddScoped<IAdministratorTDG, AdministratorTDG>();
 
 builder.Services.AddScoped<IMedicalPlanTDG, MedicalPlanTDG>();
 
+builder.Services.AddScoped<IMedicationTrackerTDG, MedicationTrackerTDG>();
+
 builder.Services.AddScoped<IOCR_API_TDG, OCR_API_TDG>();
+
+builder.Services.AddScoped<IPrescriptionTDG, PrescriptionTDG>();
 
 builder.Services.AddScoped<IOCR_Adapter, OCR_Adapter>();
 

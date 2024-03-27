@@ -784,10 +784,6 @@ namespace DataSourceLayer.Migrations
                         .HasColumnType("INTEGER")
                         .HasColumnName("planId");
 
-                    b.Property<long>("AccountId")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("accountId");
-
                     b.Property<long>("AssignedByNurseId")
                         .HasColumnType("INTEGER")
                         .HasColumnName("assignedByNurseId");
@@ -1045,7 +1041,7 @@ namespace DataSourceLayer.Migrations
 
                     b.HasIndex("PatientMedicalPlanId");
 
-                    b.ToTable("Prescription");
+                    b.ToTable("Prescriptions");
                 });
 
             modelBuilder.Entity("DomainLayer.Entity.RescheduleRequest", b =>

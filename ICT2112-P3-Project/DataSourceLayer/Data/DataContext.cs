@@ -80,6 +80,7 @@ public partial class DataContext : DbContext
     public virtual DbSet<SafetyChecklistAssessment> SafetyChecklistAssessments => Set<SafetyChecklistAssessment>();
 
     public virtual DbSet<MedicationTracker> MedicationTrackers => Set<MedicationTracker>();
+    public virtual DbSet<Prescription> Prescriptions => Set<Prescription>();
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlite("DataSource=..\\database.db;");
 
@@ -442,7 +443,6 @@ public partial class DataContext : DbContext
             entity.ToTable("Patient Medical Plan");
 
             entity.Property(e => e.PlanId).HasColumnName("planId");
-            entity.Property(e => e.AccountId).HasColumnName("accountId");
             entity.Property(e => e.PatientId).HasColumnName("patientId");
             entity.Property(e => e.PlanNotes).HasColumnName("planNotes");
             entity.Property(e => e.PlanStart).HasColumnName("planStart");
