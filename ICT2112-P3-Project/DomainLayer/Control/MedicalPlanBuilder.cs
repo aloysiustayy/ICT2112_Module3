@@ -3,6 +3,7 @@ using DomainLayer.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -27,7 +28,7 @@ namespace DomainLayer.Control
             _drugsSelected = selectedDrugs;
         }
 
-        public void SetPlanDetails(bool trackPlan, string notes, DateTime start, DateTime end, long patientId, long assignedByNurseId)
+        public MedicalPlanBuilder SetPlanDetails(bool trackPlan, string notes, DateTime start, DateTime end, long patientId, long assignedByNurseId)
         {
             _medicalPlan.TrackPlan = trackPlan;
             _medicalPlan.PlanNotes = notes;
@@ -35,14 +36,28 @@ namespace DomainLayer.Control
             _medicalPlan.PlanEnd = end;
             _medicalPlan.PatientId = patientId;
             _medicalPlan.AssignedByNurseId = assignedByNurseId;
+
+            return this;
+        }
+
+        public MedicalPlanBuilder AddPrescription(long drugId, long medicationTrackerId, long planId)
+        {
+            var prescription = new Prescription
+            {
+                DrugId = drugId,
+                MedicationTrackerId = medicationTrackerId,
+                PatientMedicalPlanId = planId
+            };
+            _medicalPlan.Prescriptions.Add(prescription);
+            return this;
         }
 
         public PatientMedicalPlan Build()
         {
-            List<Prescription> prescriptions = new List<Prescription>();
+            /*List<Prescription> prescriptions = new List<Prescription>();
             prescriptions.AddRange(_drugsSelected);
             prescriptions.AddRange(_prescriptions);
-            Console.WriteLine("Building Medical Plan: " + _medicalPlan.Prescriptions.ElementAt(0).Drug.DrugName);
+            Console.WriteLine("Building Medical Plan: " + _medicalPlan.Prescriptions.ElementAt(0).Drug.DrugName);*/
 
             return _medicalPlan;
         }

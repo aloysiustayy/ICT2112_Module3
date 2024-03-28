@@ -8,6 +8,7 @@ using PresentationLayer.Views.ViewModel;
 using Newtonsoft.Json;
 using System.Buffers.Text;
 using Microsoft.AspNetCore.Razor.TagHelpers;
+using System.Numerics;
 
 namespace PresentationLayer.Controllers
 {
@@ -69,7 +70,7 @@ namespace PresentationLayer.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GeneratePlan(MedicationEntryViewModel model)
+        public IActionResult GeneratePlan(MedicationEntryViewModel model)
         {
             // Example of logging the received data
             MedicalPlanBuilder planBuilder = new MedicalPlanBuilder();
@@ -78,15 +79,15 @@ namespace PresentationLayer.Controllers
                 // Deserialize the JSON string back into a MedicalPlanBuilder object
                 planBuilder = JsonConvert.DeserializeObject<MedicalPlanBuilder>(builderJson);
             }
-            planBuilder.SetPlanDetails(model.TrackPlan, model.PlanNotes, model.PlanStart, model.PlanEnd, model.PatientID, model.AssignedByNurseID);
+            // planBuilder.SetPlanDetails(model.TrackPlan, model.PlanNotes, model.PlanStart, model.PlanEnd, model.PatientID, model.AssignedByNurseID);
 
             MedicalPlanManagement medicalPlanManagement = new MedicalPlanManagement(_medicalPlanTDG);
 
             // Create a new plan for creation of prescription
-            var newPlan = await medicalPlanManagement.CreateMedicalPlan(model.PatientID, model.PlanNotes, model.PlanStart, model.PlanEnd, model.TrackPlan, model.AssignedByNurseID);
-            var planId = newPlan.PlanId;
+            // var newPlan = await medicalPlanManagement.CreateMedicalPlan(model.PatientID, model.PlanNotes, model.PlanStart, model.PlanEnd, model.TrackPlan, model.AssignedByNurseID);
+            // var planId = newPlan.PlanId;
 
-            List<Prescription> prescriptions = new List<Prescription>();
+            /*List<Prescription> prescriptions = new List<Prescription>();
             if (model.TrackPlan == true)
             {
                 // Instantiate the two control classes
@@ -107,10 +108,10 @@ namespace PresentationLayer.Controllers
                     prescriptions.Add(prescription);
                     planBuilder.SetPrescriptions(prescriptions);
                 }
-                /*_logger.LogInformation(planBuilder.ToString());
+                *//*_logger.LogInformation(planBuilder.ToString());
                 TempData["SelectedDrugs"] = JsonConvert.SerializeObject(planBuilder);
-                _logger.LogInformation(JsonConvert.SerializeObject(planBuilder));*/
-            }
+                _logger.LogInformation(JsonConvert.SerializeObject(planBuilder));*//*
+            }*/
 
             return RedirectToAction("Plan");
         }
@@ -155,8 +156,10 @@ namespace PresentationLayer.Controllers
             return View(drugRecordViewModel);
         }
 
-        public async Task<IActionResult> SelectDrugRecordDrugs()
+        public async Task<IActionResult> SelectDrugRecordDrugs(long planId, bool trackPlan)
         {
+            TempData["PlanId"] = planId;
+            TempData["TrackPlan"] = trackPlan;
             DrugManagement dm = new DrugManagement(_drugTDG);
             DrugRecordManagement ac = new DrugRecordManagement(_drugRecordTDG);
             var test = ac.retrieveDrugRecords(patientID);
@@ -175,25 +178,39 @@ namespace PresentationLayer.Controllers
 
 
         [HttpPost]
-        public IActionResult SelectDrugRecordDrugs(long[] SelectedDrugs)
+        public async Task<IActionResult> SelectDrugRecordDrugs(long[] SelectedDrugs)
         {
             var selectedDrugIds = SelectedDrugs; // This now contains all the selected DrugId values
-
+            long planId = (long)TempData["PlanId"];
+            bool trackPlan = (bool)TempData["TrackPlan"];
+            MedicalPlanBuilder planBuilder = new MedicalPlanBuilder();
+            if (trackPlan)
+            {
+                // Instantiate the two control classes
+                MedicationTrackerManagement medicationTrackerManagement = new MedicationTrackerManagement(_medicationTrackerTDG);
+                PrescriptionManagement prescriptionManagement = new PrescriptionManagement(_prescriptionTDG);
+                foreach (var drugId in selectedDrugIds)
+                {
+                    var newTracker = await medicationTrackerManagement.CreateMedicationTracker(0, false);
+                    var trackerId = newTracker.TrackingId;
+                    var prescription = await prescriptionManagement.CreatePrescription(planId, trackerId, drugId);
+                    planBuilder.AddPrescription(planId, trackerId, drugId);
+                }
+            } 
+            else
+            {
+                List<Prescription> tracker = new List<Prescription>();
+                foreach (var drugId in selectedDrugIds)
+                {
+                    tracker.Add(new Prescription { DrugId = drugId, PatientMedicalPlanId = planId, MedicationTracker = new MedicationTracker() });
+                }
+                planBuilder.SetSelectedDrugs(tracker);
+            }
             // Example of logging the received data
             foreach (var drugId in selectedDrugIds)
             {
                 _logger.LogInformation($"Selected Drug ID: {drugId}");
             }
-            DrugManagement dm = new DrugManagement(_drugTDG);
-            List<Prescription> tracker = new List<Prescription>();
-            foreach (var drugId in selectedDrugIds)
-            {
-                tracker.Add(new Prescription { DrugId = drugId, Drug = dm.retrieveDrug((int)drugId), MedicationTracker = new MedicationTracker() });
-            }
-
-            var planBuilder = new MedicalPlanBuilder();
-            planBuilder.SetSelectedDrugs(tracker);
-
             // Serialize the planBuilder object to a JSON string
             var trackerJson = JsonConvert.SerializeObject(planBuilder);
             // Store the JSON string in TempData
@@ -201,6 +218,21 @@ namespace PresentationLayer.Controllers
 
 
             return RedirectToAction("GeneratePlan");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreatePlan(MedicationEntryViewModel model)
+        {
+            MedicalPlanManagement medicalPlanManagement = new MedicalPlanManagement(_medicalPlanTDG);
+            MedicalPlanBuilder planBuilder = new MedicalPlanBuilder();
+            planBuilder.SetPlanDetails(model.TrackPlan, model.PlanNotes, model.PlanStart, model.PlanEnd, model.PatientID, model.AssignedByNurseID);
+
+            // Create a new plan for creation of prescription
+            var newPlan = await medicalPlanManagement.CreateMedicalPlan(model.PatientID, model.PlanNotes, model.PlanStart, model.PlanEnd, model.TrackPlan, model.AssignedByNurseID);
+            var planId = newPlan.PlanId;
+            var trackPlan = newPlan.TrackPlan;
+
+            return RedirectToAction("SelectDrugRecordDrugs", new { planId, trackPlan });
         }
     }
 }

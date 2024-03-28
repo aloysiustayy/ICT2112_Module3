@@ -8,7 +8,30 @@
             <div class="mt-5">
                 <h2>@ViewData["Title"]</h2>
                 <p>Welcome to the Medical Plan Management System.</p>
-                <a href="@Url.Action("SelectDrugRecordDrugs", "MedicalPlan")" class="btn btn-primary">Generate New Plan</a>
+                <!-- Start of Form -->
+                <form method="post" action="@Url.Action("CreatePlan", "MedicalPlan")">
+                    <div class="form-group">
+                        <label for="trackPlan">Track Plan:</label>
+                        <select class="form-control" id="trackPlan" name="TrackPlan" required>
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="planNotes">Plan Notes:</label>
+                        <textarea class="form-control" id="planNotes" name="PlanNotes" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="planStart">Plan Start Date:</label>
+                        <input type="date" class="form-control" id="planStart" name="PlanStart" required>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="planEnd">Plan End Date:</label>
+                        <input type="date" class="form-control" id="planEnd" name="PlanEnd" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">Create Plan</button>
+                </form>
+                <!-- End of Form -->
             </div>
         </div>
     </div>
