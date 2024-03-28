@@ -8,6 +8,7 @@ using PresentationLayer.Views.ViewModel;
 using Newtonsoft.Json;
 using System.Buffers.Text;
 using Microsoft.AspNetCore.Razor.TagHelpers;
+using DataSourceLayer.Gateway;
 
 namespace PresentationLayer.Controllers
 {
@@ -81,6 +82,7 @@ namespace PresentationLayer.Controllers
             planBuilder.SetPlanDetails(model.TrackPlan, model.PlanNotes, model.PlanStart, model.PlanEnd, model.PatientID, model.AssignedByNurseID);
 
             MedicalPlanManagement medicalPlanManagement = new MedicalPlanManagement(_medicalPlanTDG);
+            DrugManagement dm = new DrugManagement(_drugTDG);
 
             // Create a new plan for creation of prescription
             var newPlan = await medicalPlanManagement.CreateMedicalPlan(model.PatientID, model.PlanNotes, model.PlanStart, model.PlanEnd, model.TrackPlan, model.AssignedByNurseID);
@@ -96,20 +98,27 @@ namespace PresentationLayer.Controllers
                 {
                     _logger.LogInformation("Medication: {DrugID}, TimesPerDay: {TimesPerDay}, BeforeMeals: {BeforeMeals}",
                         model.MedicationEntries[i].DrugID, model.MedicationEntries[i].TimesPerDay, model.MedicationEntries[i].BeforeMeals);
-                    // MedicationTracker tracker = new MedicationTracker().CreateTracker(model.MedicationEntries[i].TimesPerDay, model.MedicationEntries[i].BeforeMeals);
+                    
                     var newTracker = await medicationTrackerManagement.CreateMedicationTracker(model.MedicationEntries[i].TimesPerDay, model.MedicationEntries[i].BeforeMeals);
                     var trackerId = newTracker.TrackingId;
 
                     int drugID = Convert.ToInt32(model.MedicationEntries[i].DrugID);
 
-                    // Prescription prescription = new Prescription { DrugId = drugID, MedicationTrackerId = trackerId, PatientMedicalPlanId = planId };
                     var prescription = await prescriptionManagement.CreatePrescription(planId, trackerId, drugID);
+                    prescription.Drug = dm.retrieveDrug(drugID);
                     prescriptions.Add(prescription);
-                    planBuilder.SetPrescriptions(prescriptions);
                 }
-                /*_logger.LogInformation(planBuilder.ToString());
-                TempData["SelectedDrugs"] = JsonConvert.SerializeObject(planBuilder);
-                _logger.LogInformation(JsonConvert.SerializeObject(planBuilder));*/
+                planBuilder.SetPrescriptions(prescriptions);
+                // print the content of planBuilder here 
+                var builderContent = planBuilder.ToString();
+                _logger.LogInformation(builderContent);
+                Console.WriteLine(builderContent);
+
+                var settings = new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                };
+                TempData["SelectedDrugs"] = JsonConvert.SerializeObject(planBuilder, settings);
             }
 
             return RedirectToAction("Plan");

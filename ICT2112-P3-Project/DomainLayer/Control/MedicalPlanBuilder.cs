@@ -11,20 +11,43 @@ namespace DomainLayer.Control
     public class MedicalPlanBuilder : IMedicalPlanBuilder
     {
         public PatientMedicalPlan _medicalPlan { get; set; } = new PatientMedicalPlan();
-        public List<Prescription> _drugsSelected { get; set; }
-        public List<Prescription> _prescriptions { get; set; }
+        public List<Prescription> _drugsSelected { get; set; } = new List<Prescription>();
+        public List<Prescription> _prescriptions { get; set; } = new List<Prescription>();
 
-        public MedicalPlanBuilder() { }
-
-        public void SetPrescriptions(List<Prescription> prescription)
+        public MedicalPlanBuilder()
         {
+        }
 
-            _prescriptions = prescription;
+        public void SetPrescriptions(List<Prescription> newPrescriptions)
+        {
+            // Check if the _medicalPlan.Prescriptions is null, initialize it if it is
+            if (_medicalPlan.Prescriptions == null)
+            {
+                _medicalPlan.Prescriptions = new List<Prescription>();
+            }
+
+            // Append new prescriptions to the existing list
+            foreach (var prescription in newPrescriptions)
+            {
+                // Here you might also want to check for duplicates before adding
+                _medicalPlan.Prescriptions.Add(prescription);
+            }
         }
 
         public void SetSelectedDrugs(List<Prescription> selectedDrugs)
         {
-            _drugsSelected = selectedDrugs;
+            // Check if the _medicalPlan.Prescriptions is null, initialize it if it is
+            if (_medicalPlan.Prescriptions == null)
+            {
+                _medicalPlan.Prescriptions = new List<Prescription>();
+            }
+
+            // Append new prescriptions to the existing list
+            foreach (var drug in selectedDrugs)
+            {
+                // Here you might also want to check for duplicates before adding
+                _medicalPlan.Prescriptions.Add(drug);
+            }
         }
 
         public void SetPlanDetails(bool trackPlan, string notes, DateTime start, DateTime end, long patientId, long assignedByNurseId)
@@ -39,13 +62,28 @@ namespace DomainLayer.Control
 
         public PatientMedicalPlan Build()
         {
-            List<Prescription> prescriptions = new List<Prescription>();
-            prescriptions.AddRange(_drugsSelected);
-            prescriptions.AddRange(_prescriptions);
             Console.WriteLine("Building Medical Plan: " + _medicalPlan.Prescriptions.ElementAt(0).Drug.DrugName);
 
             return _medicalPlan;
         }
 
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine($"TrackPlan: {_medicalPlan.TrackPlan}");
+            sb.AppendLine($"PlanNotes: {_medicalPlan.PlanNotes}");
+            sb.AppendLine($"PlanStart: {_medicalPlan.PlanStart}");
+            sb.AppendLine($"PlanEnd: {_medicalPlan.PlanEnd}");
+            sb.AppendLine($"PatientID: {_medicalPlan.PatientId}");
+            sb.AppendLine($"AssignedByNurseID: {_medicalPlan.AssignedByNurseId}");
+
+            sb.AppendLine("Prescriptions:");
+            foreach (var prescription in _medicalPlan.Prescriptions)
+            {
+                sb.AppendLine($"  DrugID: {prescription.DrugId}, MedicationTrackerId: {prescription.MedicationTrackerId}");
+            }
+
+            return sb.ToString();
+        }
     }
 }
