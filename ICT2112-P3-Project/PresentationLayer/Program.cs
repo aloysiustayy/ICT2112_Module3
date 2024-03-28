@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using DomainLayer.Interface;
 using DataSourceLayer.Data;
 using DataSourceLayer.Gateway;
+using DomainLayer.Control;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,13 @@ builder.Services.AddDbContext<DataContext>(options =>
 
 // Register data source layer abstractions to decouple.
 builder.Services.AddScoped<IAdministratorTDG, AdministratorTDG>();
+builder.Services.AddScoped<PhotoControl>();
+builder.Services.AddScoped<SafetyChecklistControl>();
+
+// Register the IPhotoTDG and ISafetyChecklistTDG interfaces with their respective implementations
+builder.Services.AddScoped<IPhotoTDG, PhotoTDG>();
+builder.Services.AddScoped<ISafetyChecklistTDG, SafetyChecklistTDG>();
+
 
 builder.Services.AddScoped<IMedicalPlanTDG, MedicalPlanTDG>();
 

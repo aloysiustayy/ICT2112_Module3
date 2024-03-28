@@ -38,8 +38,12 @@
             <nav id="navbar" class="navbar order-last order-lg-0">
                 <ul>
                     <!-- Do asp-area="" and asp-action="" whenever you want to redirect -->
-                    <li><a class="nav-link active" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a class="nav-link">About</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link @IsActive("Home", "Index")" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @IsActive("Home", "SafetyChecklist")" asp-controller="UploadPhotoInput" asp-action="SafetyChecklist">Safety Checklist</a>
+                    </li>
                     <li><a class="nav-link">Services</a></li>
                     <li><a class="nav-link">Departments</a></li>
                     <li><a class="nav-link">Doctors</a></li>
@@ -133,3 +137,13 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+@functions {
+    public string IsActive(string controller, string action)
+    {
+        var currentAction = ViewContext.RouteData.Values["Action"] as string;
+        var currentController = ViewContext.RouteData.Values["Controller"] as string;
+
+        return (controller == currentController && action == currentAction) ? "active" : "";
+    }
+}
