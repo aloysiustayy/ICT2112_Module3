@@ -50,27 +50,16 @@ namespace PresentationLayer.Controllers
                     var imageBytes = memoryStream.ToArray();
                     var base64String = Convert.ToBase64String(imageBytes);
 
-                    MedicalPlanManagement planManagement = new MedicalPlanManagement(_medicalPlanTDG, _iOCR_API_TDG);
+                    MedicalPlanManagement planManagement = new MedicalPlanManagement(_medicalPlanTDG, _iOCR_API_TDG, _consumedDateTimeTDG);
                     string detectedText = await planManagement.ExecuteOCR(base64String);
                     Console.WriteLine(detectedText);
 
-                    // Comparing detected text with the selected medication tracker
-                    PrescriptionManagement prescriptionManagement = new PrescriptionManagement(_prescriptionTDG);
-                    var prescription = await prescriptionManagement.GetPrescriptionByTrackerId(selectedPrescriptionId);
-                    var drugName = prescription.Drug.DrugName;
-                    var trackerId = prescription.MedicationTrackerId;
-                    ConsumedDateTimeManagement consumedDateTimeManagement = new ConsumedDateTimeManagement(_consumedDateTimeTDG);
-                    if(drugName != null && detectedText.Contains(drugName))
-                    {
-                        Console.WriteLine($"{drugName} found in the image");
-                        await consumedDateTimeManagement.AddConsumedDateTime((int)trackerId);
-                    }
-                    return RedirectToAction("Index");
+                    return Json(new {success = true, detectedText, selectedPrescriptionId });
                 }
 
                 // Redirect or return a view here after successful upload
             }
-            return RedirectToAction("Index");
+            return Json(new { success = false, errorMessage = "No file uploaded." });
         }
 
         [HttpGet]
@@ -83,6 +72,22 @@ namespace PresentationLayer.Controllers
                 PrescriptionDetails = $"{p.Drug.DrugName}" // Example format
             }).ToList();
             return Json(result);
+        }
+
+        [HttpPost]
+        public async Task ConfirmMedicationName(string detectedText, int selectedPrescriptionId)
+        {
+            MedicalPlanManagement planManagement = new MedicalPlanManagement(_medicalPlanTDG, _iOCR_API_TDG, _consumedDateTimeTDG);
+            // Comparing detected text with the selected medication tracker
+            PrescriptionManagement prescriptionManagement = new PrescriptionManagement(_prescriptionTDG);
+            var prescription = await prescriptionManagement.GetPrescriptionByTrackerId(selectedPrescriptionId);
+            var drugName = prescription.Drug.DrugName;
+            var trackerId = prescription.MedicationTrackerId;
+            if (drugName != null && detectedText.Contains(drugName))
+            {
+                Console.WriteLine($"{drugName} found in the image");
+                await planManagement.UpdateConsumedTime((int)trackerId);
+            }
         }
     }
 }

@@ -12,14 +12,16 @@ namespace DomainLayer.Control
     {
         private readonly IMedicalPlanTDG _medicalPlanTDG;
         private readonly IOCR_API_TDG _iOCR_API_TDG;
+        private readonly IConsumedDateTimeTDG _consumedDateTimeTDG;
         public MedicalPlanManagement(IMedicalPlanTDG medicalPlanTDG)
         {
             _medicalPlanTDG = medicalPlanTDG;
         }
-        public MedicalPlanManagement(IMedicalPlanTDG medicalPlanTDG, IOCR_API_TDG oCR_API_TDG)
+        public MedicalPlanManagement(IMedicalPlanTDG medicalPlanTDG, IOCR_API_TDG oCR_API_TDG, IConsumedDateTimeTDG consumedDateTimeTDG)
         {
             _medicalPlanTDG = medicalPlanTDG;
             _iOCR_API_TDG = oCR_API_TDG;
+            _consumedDateTimeTDG = consumedDateTimeTDG;
         }
 
         public void GeneratePlan(PatientMedicalPlan medicalPlan)
@@ -73,6 +75,12 @@ namespace DomainLayer.Control
         public async Task<List<PatientMedicalPlan>> GetPatientAllMedicalPlan(int patientId)
         {
             return await _medicalPlanTDG.GetMedicalPlanByPatientIdAsync(patientId);
+        }
+
+        public async Task UpdateConsumedTime(int trackerId)
+        {
+            ConsumedDateTimeManagement consumedDateTimeManagement = new ConsumedDateTimeManagement(_consumedDateTimeTDG);
+            await consumedDateTimeManagement.AddConsumedDateTime(trackerId);
         }
     }
 

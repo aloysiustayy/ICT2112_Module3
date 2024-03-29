@@ -8,7 +8,7 @@
         <div class="row">
             <div class="mt-5">
                 <h2>@ViewData["Title"]</h2>
-                <form asp-action="SubmitImage" asp-controller="MedicationTracker" method="post" enctype="multipart/form-data">
+                <form id="imageUploadForm" method="post" enctype="multipart/form-data">
                     <div class="form-group mb-3">
                         <label for="medicalPlan">Select Medical Plan:</label>
                         <select class="form-control" id="medicalPlan" name="medicalPlanId">
@@ -31,6 +31,25 @@
                     </div>
                     <button type="submit" class="btn btn-primary mt-2">Upload</button>
                 </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmationModalLabel">Detected Text</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="detectedTextContent">
+                    <!-- The detected text will be displayed here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="confirmDetectedTextButton">Confirm</button>
+                </div>
             </div>
         </div>
     </div>
@@ -67,6 +86,54 @@
         $('#prescription').change(function () {
             var selectedPrescriptionId = $(this).val();
             $('#selectedPrescriptionId').val(selectedPrescriptionId);
+        });
+
+        $('#imageUploadForm').on('submit', function (e) {
+            e.preventDefault(); // Prevent default form submission
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: '@Url.Action("SubmitImage", "MedicationTracker")',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    $('#detectedTextContent').text(response.detectedText); // Update modal content
+                    $('#confirmationModal').modal('show'); // Show the modal
+                    
+                    // Save these details for further actions
+                    $('#confirmDetectedTextButton').data('detectedText', response.detectedText);
+                    $('#confirmDetectedTextButton').data('selectedPrescriptionId', response.selectedPrescriptionId);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error during image submission:", error);
+                }
+            });
+        });
+
+        $('#confirmDetectedTextButton').on('click', function () {
+            var detectedText = $(this).data('detectedText');
+            var selectedPrescriptionId = $(this).data('selectedPrescriptionId');
+
+            $.ajax({
+                url: '@Url.Action("ConfirmMedicationName", "MedicationTracker")',
+                type: 'POST',
+                data: {
+                    detectedText: detectedText,
+                    selectedPrescriptionId: selectedPrescriptionId
+                },
+                success: function (response) {
+                    $('#confirmationModal').modal('hide');
+                    alert('Medication confirmed successfully.');
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    // Handle error
+                    console.error("Error confirming medication:", error);
+                    alert('There was a problem confirming the medication.');
+                }
+            });
         });
     });
 </script>
