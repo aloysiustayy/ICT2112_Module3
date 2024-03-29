@@ -14,4 +14,10 @@ namespace DomainLayer.Interface
         public Task UpdateMedicationTrackerAsync(MedicationTracker existingTracker);
         public Task DeleteMedicationTrackerAsync(int trackerId);
     }
+
+    public interface IConsumedDateTimeTDG
+    {
+        public Task<List<ConsumedDateTime>> GetConsumedDateTimeAsync(int trackerId);
+        public Task CreateConsumedDateTime(long trackerId, DateTime dateTime);
+    }
 }

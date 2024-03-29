@@ -19,6 +19,8 @@ builder.Services.AddScoped<IMedicalPlanTDG, MedicalPlanTDG>();
 
 builder.Services.AddScoped<IMedicationTrackerTDG, MedicationTrackerTDG>();
 
+builder.Services.AddScoped<IConsumedDateTimeTDG, ConsumedDateTimeTDG>();
+
 builder.Services.AddScoped<IOCR_API_TDG, OCR_API_TDG>();
 
 builder.Services.AddScoped<IPrescriptionTDG, PrescriptionTDG>();

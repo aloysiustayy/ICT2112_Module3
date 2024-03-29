@@ -47,10 +47,7 @@ namespace DataSourceLayer.Gateway
         }
         public Drug GetDrugByDrugId(long drugID)
         {
-            long id = (long)drugID;
-            Drug x = _context.Drugs.Find((long)drugID);
-            Console.WriteLine("DrugTDG: " + drugID + "," + x);
-            return _context.Drugs.Find(id);
+            return _context.Drugs.Find(drugID);
         }
 
         public void CreateDrug(Drug newDrug)

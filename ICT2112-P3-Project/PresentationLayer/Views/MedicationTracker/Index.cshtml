@@ -1,0 +1,72 @@
+﻿@model List<DomainLayer.Entity.MedicationTracker>
+@{
+    ViewData["Title"] = "Image Upload";
+}
+
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="mt-5">
+                <h2>@ViewData["Title"]</h2>
+                <form asp-action="SubmitImage" asp-controller="MedicationTracker" method="post" enctype="multipart/form-data">
+                    <div class="form-group mb-3">
+                        <label for="medicalPlan">Select Medical Plan:</label>
+                        <select class="form-control" id="medicalPlan" name="medicalPlanId">
+                            @foreach (var item in (SelectList)ViewBag.MedicalPlans)
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="prescription">Select Prescription:</label>
+                        <select class="form-control" id="prescription" name="prescriptionId" disabled>
+                            <option value="">Please select a prescription</option>
+                        </select>
+                        <input type="hidden" name="selectedPrescriptionId" id="selectedPrescriptionId" />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="imageFile">Choose image to upload</label>
+                        <input type="file" class="form-control mt-2 mb-2" name="imageFile" id="imageFile" required />
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-2">Upload</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    $(document).ready(function () {
+        $('#medicalPlan').change(function () {
+            var selectedPlanId = $(this).val();
+            if(selectedPlanId) {
+                $.ajax({
+                    url: '@Url.Action("GetPrescriptionsForMedicalPlan", "MedicationTracker")',
+                    type: 'GET',
+                    data: { medicalPlanId: selectedPlanId },
+                    success: function (data) {
+                        $('#prescription').empty().append('<option value="">Please select a prescription</option>');
+                        $.each(data, function (index, item) {
+                            $('#prescription').append($('<option>', {
+                                value: item.prescriptionId,
+                                text: item.prescriptionDetails
+                            }));
+                        });
+                        $('#prescription').prop('disabled', false);
+                    },
+                    error: function (error) {
+                        console.error("Error fetching prescriptions:", error);
+                        $('#prescription').prop('disabled', true);
+                    }
+                });
+            } else {
+                $('#prescription').empty().append('<option value="">Please select a medical plan first</option>').prop('disabled', true);
+            }
+        });
+
+        $('#prescription').change(function () {
+            var selectedPrescriptionId = $(this).val();
+            $('#selectedPrescriptionId').val(selectedPrescriptionId);
+        });
+    });
+</script>

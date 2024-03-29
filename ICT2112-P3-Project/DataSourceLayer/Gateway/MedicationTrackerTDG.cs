@@ -55,4 +55,33 @@ namespace DataSourceLayer.Gateway
             await _context.SaveChangesAsync();
         }
     }
+
+    public class ConsumedDateTimeTDG : IConsumedDateTimeTDG
+    {
+        private readonly DataContext _context;
+
+        public ConsumedDateTimeTDG(DataContext context)
+        {
+            _context = context;
+        }
+
+        public async Task CreateConsumedDateTime(long trackerId, DateTime dateTime)
+        {
+            var newConsumedOn = new ConsumedDateTime
+            {
+                MedicationTrackerId = trackerId,
+                DateTime = dateTime,
+            };
+
+            await _context.ConsumedDateTimes.AddAsync(newConsumedOn);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<ConsumedDateTime>> GetConsumedDateTimeAsync(int trackerId)
+        {
+            return await _context.ConsumedDateTimes
+                                 .Where(cd => cd.MedicationTrackerId == trackerId)
+                                 .ToListAsync();
+        }
+    }
 }

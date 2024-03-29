@@ -41,7 +41,8 @@ namespace DataSourceLayer.Gateway
             // Make the POST request to the Vision API
             var response = await httpClient.PostAsync("https://vision.googleapis.com/v1/images:annotate", content);
             var responseContent = await response.Content.ReadAsStringAsync();
-            return responseContent;
+            var textDetected = _adapter.ConvertFromJSON(responseContent);
+            return textDetected;
         }
     }
 }

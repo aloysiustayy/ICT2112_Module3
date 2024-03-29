@@ -168,7 +168,7 @@ namespace DataSourceLayer.Migrations
 
                     b.HasKey("MedicationTrackerId", "DateTime");
 
-                    b.ToTable("ConsumedDateTime");
+                    b.ToTable("ConsumedDateTimes");
                 });
 
             modelBuilder.Entity("DomainLayer.Entity.DischargeRecord", b =>

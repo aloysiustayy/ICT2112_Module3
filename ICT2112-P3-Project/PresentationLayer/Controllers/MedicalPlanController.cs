@@ -21,52 +21,19 @@ namespace PresentationLayer.Controllers
         private readonly IPrescriptionTDG _prescriptionTDG;
         private readonly IDrugRecordTDG _drugRecordTDG;
         private readonly IDrugTDG _drugTDG;
-        private readonly IOCR_API_TDG _iOCR_API_TDG;
 
         private long patientID = 2;
 
 
-        public MedicalPlanController(ILogger<MedicalPlanController> logger, IMedicalPlanTDG medicalPlanTDG, IDrugRecordTDG drugRecordTDG, IDrugTDG drugTDG, 
-            IOCR_API_TDG iOCR_API_TDG, IMedicationTrackerTDG medicationTrackerTDG, IPrescriptionTDG prescriptionTDG)
+        public MedicalPlanController(ILogger<MedicalPlanController> logger, IMedicalPlanTDG medicalPlanTDG, IDrugRecordTDG drugRecordTDG, IDrugTDG drugTDG,
+            IMedicationTrackerTDG medicationTrackerTDG, IPrescriptionTDG prescriptionTDG)
         {
             _logger = logger;
             _medicalPlanTDG = medicalPlanTDG;
             _drugRecordTDG = drugRecordTDG;
             _drugTDG = drugTDG;
-            _iOCR_API_TDG = iOCR_API_TDG;
             _medicationTrackerTDG = medicationTrackerTDG;
             _prescriptionTDG = prescriptionTDG;
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> SubmitImage(IFormFile imageFile)
-        {
-            if (imageFile != null && imageFile.Length > 0)
-            {
-                // Read the uploaded image into a MemoryStream
-                using (var memoryStream = new MemoryStream())
-                {
-                    await imageFile.CopyToAsync(memoryStream);
-
-                    // Ensure the memory stream is at the beginning before reading
-                    memoryStream.Position = 0;
-
-                    // Convert the byte array to a Base64 string
-                    var imageBytes = memoryStream.ToArray();
-                    var base64String = Convert.ToBase64String(imageBytes);
-
-                    // Now you have the image as a Base64 string
-                    // You can pass this string to your view, store it, or perform further actions
-
-                    MedicalPlanManagement planManagement = new MedicalPlanManagement(_medicalPlanTDG, _iOCR_API_TDG);
-                    string test = await planManagement.ExecuteOCR(base64String);
-                    Console.WriteLine(test);
-                    return RedirectToAction("ImageUpload");
-                }
-
-                // Redirect or return a view here after successful upload
-            }
-            return RedirectToAction("ImageUpload");
         }
 
         [HttpPost]
@@ -122,12 +89,6 @@ namespace PresentationLayer.Controllers
             }
 
             return RedirectToAction("Plan");
-        }
-
-
-        public IActionResult ImageUpload()
-        {
-            return View();
         }
 
         public IActionResult Index()

@@ -40,4 +40,20 @@ namespace DomainLayer.Control
             await _medicationTrackerTDG.UpdateMedicationTrackerAsync(existingTracker);
         }
     }
+
+    public class ConsumedDateTimeManagement
+    {
+        private readonly IConsumedDateTimeTDG _consumedDateTimeTDG;
+
+        public ConsumedDateTimeManagement(IConsumedDateTimeTDG consumedDateTimeTDG)
+        {
+            _consumedDateTimeTDG = consumedDateTimeTDG;
+        }
+
+        public async Task AddConsumedDateTime(int trackerId)
+        {
+            var dateTimeNow = DateTime.Now;
+            await _consumedDateTimeTDG.CreateConsumedDateTime(trackerId, dateTimeNow);
+        }
+    }
 }

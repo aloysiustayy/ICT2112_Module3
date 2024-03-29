@@ -26,6 +26,13 @@ namespace DataSourceLayer.Gateway
             return await _context.PatientMedicalPlans.FindAsync(planId);
         }
 
+        public async Task<List<PatientMedicalPlan>> GetMedicalPlanByPatientIdAsync(int patientId)
+        {
+            return await _context.PatientMedicalPlans
+                                .Where(p => p.PatientId == patientId)
+                                .ToListAsync();
+        }
+
         public async Task CreateMedicalPlanAsync(PatientMedicalPlan newPlan)
         {
             // Use AddAsync for adding entities
@@ -66,6 +73,23 @@ namespace DataSourceLayer.Gateway
         public async Task<Prescription> GetPrescriptionByIdsAsync(long medicalPlanId, long medicationTrackerId, long drugId)
         {
             return await _context.Prescriptions.FindAsync(medicalPlanId, medicationTrackerId, drugId);
+        }
+
+        public async Task<List<Prescription>> GetPrescriptionsByMedicalPlanIdAsync(int planId)
+        {
+            return await _context.Prescriptions
+                                 .Where(p => p.PatientMedicalPlanId == planId)
+                                 .Include(p => p.Drug)
+                                 .Include(p => p.MedicationTracker)
+                                 .ToListAsync();
+        }
+
+        public async Task<Prescription> GetPrescriptionByTrackerIdAsync(int trackerId)
+        {
+            return await _context.Prescriptions
+                                 .Include(p => p.Drug)
+                                 .Include(p => p.MedicationTracker)
+                                 .FirstOrDefaultAsync(p => p.MedicationTrackerId == trackerId);
         }
 
         public async Task CreatePrescriptionAsync(Prescription prescription)
