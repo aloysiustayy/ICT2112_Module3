@@ -22,11 +22,15 @@ namespace PresentationLayer.Controllers
         private readonly IDrugRecordTDG _drugRecordTDG;
         private readonly IDrugTDG _drugTDG;
 
+        private readonly IConsumedDateTimeTDG _consumedDateTimeTDG;
+
+        private readonly ILogger<MedicationTrackerManagement> _medicationTrackerManagementLogger;
+
         private long patientID = 2;
 
 
         public MedicalPlanController(ILogger<MedicalPlanController> logger, IMedicalPlanTDG medicalPlanTDG, IDrugRecordTDG drugRecordTDG, IDrugTDG drugTDG,
-            IMedicationTrackerTDG medicationTrackerTDG, IPrescriptionTDG prescriptionTDG)
+            IMedicationTrackerTDG medicationTrackerTDG, IPrescriptionTDG prescriptionTDG, IConsumedDateTimeTDG consumedDateTimeTDG, ILogger<MedicationTrackerManagement> medicationTrackerManagementLogger)
         {
             _logger = logger;
             _medicalPlanTDG = medicalPlanTDG;
@@ -34,6 +38,9 @@ namespace PresentationLayer.Controllers
             _drugTDG = drugTDG;
             _medicationTrackerTDG = medicationTrackerTDG;
             _prescriptionTDG = prescriptionTDG;
+            _consumedDateTimeTDG = consumedDateTimeTDG;
+            _medicationTrackerManagementLogger = medicationTrackerManagementLogger;
+            
         }
 
         [HttpPost]
@@ -59,7 +66,7 @@ namespace PresentationLayer.Controllers
             if (model.TrackPlan == true)
             {
                 // Instantiate the two control classes
-                MedicationTrackerManagement medicationTrackerManagement = new MedicationTrackerManagement(_medicationTrackerTDG);
+                MedicationTrackerManagement medicationTrackerManagement = new MedicationTrackerManagement(_medicationTrackerTDG, _prescriptionTDG, _consumedDateTimeTDG, _medicationTrackerManagementLogger);
                 PrescriptionManagement prescriptionManagement = new PrescriptionManagement(_prescriptionTDG);
                 for (int i = 0; i < model.MedicationEntries.Count; i++)
                 {
