@@ -15,11 +15,14 @@ builder.Services.AddDbContext<DataContext>(options =>
 builder.Services.AddScoped<IAdministratorTDG, AdministratorTDG>();
 builder.Services.AddScoped<PhotoControl>();
 builder.Services.AddScoped<SafetyChecklistControl>();
+builder.Services.AddScoped<CommunicationControl>();
 
 // Register the IPhotoTDG and ISafetyChecklistTDG interfaces with their respective implementations
 builder.Services.AddScoped<IPhotoTDG, PhotoTDG>();
 builder.Services.AddScoped<ISafetyChecklistTDG, SafetyChecklistTDG>();
 
+// Register the CommunicationControl
+builder.Services.AddScoped<ICommunicationTDG, CommunicationTDG>();
 
 builder.Services.AddScoped<IMedicalPlanTDG, MedicalPlanTDG>();
 
