@@ -82,7 +82,7 @@ public partial class DataContext : DbContext
     public virtual DbSet<MedicationTracker> MedicationTrackers => Set<MedicationTracker>();
     public virtual DbSet<Prescription> Prescriptions => Set<Prescription>();
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlite("DataSource=..\\database.db;");
+        => optionsBuilder.UseSqlite("Data Source=/Users/alainpierre/Projects/ICT2112_Module3/ICT2112-P3-Project/database.db;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

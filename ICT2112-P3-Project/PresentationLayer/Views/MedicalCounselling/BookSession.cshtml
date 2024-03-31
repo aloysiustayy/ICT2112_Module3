@@ -1,0 +1,77 @@
+﻿@page
+@{
+}
+
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="mt-5">
+                <h2>Book Medical Counselling</h2>
+                <form id="bookSessionForm" method="post" action="@Url.Action("BookSession", "MedicalCounselling")">
+                    <div class="form-group">
+                        <p>Please select your preferred type of counselling:</p>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="counsellingType" id="zoom" value="zoom">
+                            <label class="form-check-label" for="zoom">
+                                Zoom
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="counsellingType" id="faceToFace" value="faceToFace">
+                            <label class="form-check-label" for="faceToFace">
+                                Face to Face
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="additionalNotes">Additional Notes:</label>
+                        <textarea class="form-control" id="additionalNotes" name="additionalNotes" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-2">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="successModalLabel">Success!</h5>
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Medical counselling booked successfully!
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>$(function () {
+            $('#bookSessionForm').submit(function (event) {
+                event.preventDefault(); // Prevent the default form submission
+                var form = $(this);
+                $.ajax({
+                    url: form.attr('action'),
+                    method: form.attr('method'),
+                    data: form.serialize(),
+                    success: function (response) {
+                        $('#successModal').modal('show'); // Show success modal upon successful submission
+                    },
+                    error: function () {
+                        alert('An error occurred while processing your request.');
+                    }
+                });
+            });
+
+            // Refresh the page after the success modal is closed
+            $('#successModal').on('hidden.bs.modal', function () {
+                window.location.href = '@Url.Action("Index", "MedicalCounselling")';
+            });
+        });</script>
+}
+
