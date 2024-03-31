@@ -1,0 +1,109 @@
+﻿@* @model List<DomainLayer.Entity.Drug> *@
+@model PresentationLayer.Controllers.DrugRecordViewModel
+@{
+    ViewData["Title"] = "Upload Drug Record";
+}
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const addComponentButton = document.getElementById('addComponent');
+        const removeComponentButton = document.getElementById('removeComponent');
+        const componentsContainer = document.getElementById('drugComponents');
+
+        addComponentButton.addEventListener('click', () => {
+            const componentHTML = `
+            <div class="drug-group">
+                <label for="drugName">Drug Name:</label>
+                <select class="form-control" name="drugNames[]">
+                    <option value="">Select a Drug</option>
+    @foreach (var drug in Model.Drugs)
+    {
+                            <option value=@drug.DrugId>@drug.DrugName</option>
+    }
+                </select>
+                <label for="drugDesc">Description:</label>
+                <textarea class="form-control" name="drugDescs[]" rows="3"></textarea>
+            </div>
+        `;
+            componentsContainer.insertAdjacentHTML('beforeend', componentHTML);
+        });
+        // Add event listener for removeComponentButton
+        removeComponentButton.addEventListener('click', () => {
+            // Check if there are any drug-group elements
+            if (componentsContainer.getElementsByClassName('drug-group').length > 0) {
+                // Remove the last drug-group element
+                componentsContainer.removeChild(componentsContainer.lastElementChild);
+            }
+        });
+    });
+</script>
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="mt-5">
+                <h2>@ViewData["Title"]</h2>
+                <form method="post" action="@Url.Action("UploadRecord", "DrugRecord")">
+
+                    <div id="drugComponents" class="form-group">
+                        <!-- Drug components will be added here -->
+                    </div>
+                    <button type="button" class="btn btn-primary mt-2" id="addComponent">Add Drug</button>
+                    <button type="button" class="btn btn-secondary mt-2" id="removeComponent">Remove Last Drug</button>
+                    <button type="submit" class="btn btn-success mt-2">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container-fluid">
+
+    <h1 class="display-4">DrugRecord</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Full Name</th>
+                <!-- Add more columns as needed -->
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var drug in Model.DrugRecordDrug)
+            {
+
+                <tr>
+                    <td>@drug.DrugId</td>
+                    <td>@Model.Drugs.ToList()[(int)drug.DrugId - 1].DrugName</td>
+                    <td>@drug.DrugRecordDescription</td>
+                    @* <td>@drug.DrugName</td>
+                <td>@drug.DrugInformation</td> *@
+                    <!-- Output other properties as needed -->
+                </tr>
+
+            }
+
+        </tbody>
+    </table>
+    <h1 class="display-4">Administrators</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Full Name</th>
+                <!-- Add more columns as needed -->
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var drug in Model.Drugs)
+            {
+                <tr>
+                    <td>@drug.DrugId</td>
+                    <td>@drug.DrugName</td>
+                    <td>@drug.DrugInformation</td>
+                    <!-- Output other properties as needed -->
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</div>

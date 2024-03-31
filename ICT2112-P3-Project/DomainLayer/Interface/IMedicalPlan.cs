@@ -12,6 +12,6 @@ namespace DomainLayer.Interface
     {
         public void GeneratePlan(PatientMedicalPlan medicalPlan);
         public void ExportPlan();
-        public String ExecuteOCR(string base64EncodedImage);
+        public Task<string> ExecuteOCR(string base64EncodedImage);
     }
 }

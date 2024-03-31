@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using DomainLayer.Interface;
 using DataSourceLayer.Data;
 using DataSourceLayer.Gateway;
+using DomainLayer.Control;
+using DataSourceLayer.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +16,20 @@ builder.Services.AddDbContext<DataContext>(options =>
 builder.Services.AddScoped<IAdministratorTDG, AdministratorTDG>();
 
 builder.Services.AddScoped<IMedicalPlanTDG, MedicalPlanTDG>();
+
+builder.Services.AddScoped<IMedicationTrackerTDG, MedicationTrackerTDG>();
+
+builder.Services.AddScoped<IConsumedDateTimeTDG, ConsumedDateTimeTDG>();
+
+builder.Services.AddScoped<IOCR_API_TDG, OCR_API_TDG>();
+
+builder.Services.AddScoped<IPrescriptionTDG, PrescriptionTDG>();
+
+builder.Services.AddScoped<IOCR_Adapter, OCR_Adapter>();
+
+builder.Services.AddScoped<IDrugRecordTDG, DrugRecordTDG>();
+
+builder.Services.AddScoped<IDrugTDG, DrugTDG>();
 
 var app = builder.Build();
 

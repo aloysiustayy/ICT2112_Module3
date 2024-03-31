@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="~/Custom/remixicon/remixicon.css">
     <link rel="stylesheet" href="~/Custom/swiper/swiper-bundle.min.css">
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 </head>
 <body>
@@ -38,10 +39,10 @@
             <nav id="navbar" class="navbar order-last order-lg-0">
                 <ul>
                     <!-- Do asp-area="" and asp-action="" whenever you want to redirect -->
-                    <li><a class="nav-link active" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a class="nav-link">About</a></li>
-                    <li><a class="nav-link">Services</a></li>
-                    <li><a class="nav-link">Departments</a></li>
+                    <li><a class="nav-link @((ViewContext.RouteData.Values["controller"].ToString() == "Home") ? "active" : "")" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a class="nav-link @((ViewContext.RouteData.Values["controller"].ToString() == "DrugRecord") ? "active" : "")" asp-controller="DrugRecord" asp-action="Index">Drug Record</a></li>
+                    <li><a class="nav-link @((ViewContext.RouteData.Values["controller"].ToString() == "MedicalPlan") ? "active" : "")" asp-controller="MedicalPlan" asp-action="Index">Medical Plan</a></li>
+                    <li><a class="nav-link @((ViewContext.RouteData.Values["controller"].ToString() == "MedicationTracker") ? "active" : "")" asp-controller="MedicationTracker" asp-action="Index">Medication Tracking</a>
                     <li><a class="nav-link">Doctors</a></li>
 
                 </ul>
