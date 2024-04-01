@@ -115,5 +115,12 @@ namespace DataSourceLayer.Gateway
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<List<Prescription>> GetPrescriptionsByPatientIdAsync(int patientId)
+        {
+            return await _context.Prescriptions
+                                 .Where(p => p.PatientMedicalPlan.PatientId == patientId)
+                                 .ToListAsync();
+        }
     }
 }

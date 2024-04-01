@@ -23,7 +23,7 @@ namespace DataSourceLayer.Gateway
         public async Task<string> DetectText(string base64EncodedImage)
         {
             // Remember to change to Your Own Google Vision API credentials
-            var serviceAccountPath = "C:\\Users\\CPZ\\Documents\\tidal-anvil-230402-dfe950b3753e.json";
+            var serviceAccountPath = "C:\\Users\\isaac\\ICT2112\\ICT2112_Module3\\OCRAPI.json";
 
             // Authenticate with the service account
             var credential = GoogleCredential.FromFile(serviceAccountPath)
