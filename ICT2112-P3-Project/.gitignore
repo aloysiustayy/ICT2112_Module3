@@ -492,3 +492,6 @@ obj/
 
 # Entity Framework Core Migrations
 **/Migrations/*
+
+*database.db-shm
+*database.db-wal
