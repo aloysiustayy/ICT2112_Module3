@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.16" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.16">
@@ -28,6 +29,10 @@
   <ItemGroup>
     <Folder Include="wwwroot\assets\images\" />
 	<Folder Include="wwwroot\Custom" />
+	<Folder Include="Views\MedicalCounselling\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Views\MedicalCounselling\" />
+  </ItemGroup>
 </Project>

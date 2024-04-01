@@ -83,7 +83,7 @@ public partial class DataContext : DbContext
     public virtual DbSet<Prescription> Prescriptions => Set<Prescription>();
     public virtual DbSet<ConsumedDateTime> ConsumedDateTimes => Set<ConsumedDateTime>();
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlite("DataSource=..\\database.db;");
+        => optionsBuilder.UseSqlite("Data Source=..\\database.db;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
