@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,7 +13,9 @@
     <link rel="stylesheet" href="~/PresentationLayer.styles.css" asp-append-version="true" />
 
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+        rel="stylesheet">
 
     <!-- Vendor CSS Files -->
     <link rel="stylesheet" href="~/Custom/fontawesome-free/css/all.min.css">
@@ -26,6 +29,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 </head>
+
 <body>
 
 
@@ -34,16 +38,29 @@
         <div class="container d-flex align-items-center">
 
             <h1 class="logo me-auto"><a asp-area="" asp-controller="Home" asp-action="Index">Medilab</a></h1>
-       
+
 
             <nav id="navbar" class="navbar order-last order-lg-0">
                 <ul>
                     <!-- Do asp-area="" and asp-action="" whenever you want to redirect -->
-                    <li><a class="nav-link @((ViewContext.RouteData.Values["controller"].ToString() == "Home") ? "active" : "")" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a class="nav-link @((ViewContext.RouteData.Values["controller"].ToString() == "DrugRecord") ? "active" : "")" asp-controller="DrugRecord" asp-action="Index">Drug Record</a></li>
-                    <li><a class="nav-link @((ViewContext.RouteData.Values["controller"].ToString() == "MedicalPlan") ? "active" : "")" asp-controller="MedicalPlan" asp-action="Index">Medical Plan</a></li>
-                    <li><a class="nav-link @((ViewContext.RouteData.Values["controller"].ToString() == "MedicationTracker") ? "active" : "")" asp-controller="MedicationTracker" asp-action="Index">Medication Tracking</a>
-                    <li><a class="nav-link">Doctors</a></li>
+                    <li><a class="nav-link @((ViewContext.RouteData.Values["controller"].ToString() == "Home") ? "active" : "")"
+                            asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a class="nav-link @((ViewContext.RouteData.Values["controller"].ToString() == "DrugRecord") ? "active" : "")"
+                            asp-controller="DrugRecord" asp-action="Index">Drug Record</a></li>
+                    <li><a class="nav-link @((ViewContext.RouteData.Values["controller"].ToString() == "MedicalPlan") ? "active" : "")"
+                            asp-controller="MedicalPlan" asp-action="Index">Medical Plan</a></li>
+                    <li><a class="nav-link @((ViewContext.RouteData.Values["controller"].ToString() == "MedicationTracker") ? "active" : "")"
+                            asp-controller="MedicationTracker" asp-action="Index">Medication Tracking</a>
+
+                        <!-- Team 4 -->
+                    <li class="nav-item">
+                        <a class="nav-link @IsActive("Home", "SafetyChecklist")" asp-controller="UploadPhotoInput"
+                            asp-action="SafetyChecklist">Safety Checklist</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @IsActive("Home", "Communication")" asp-controller="CommunicationInput"
+                            asp-action="Communication">Communication</a>
+                    </li>
 
                 </ul>
                 <i class="bi bi-list mobile-nav-toggle"></i>
@@ -53,7 +70,7 @@
     </header><!-- End Header -->
 
     <div class="container">
-        <main role="main" id="main"class="pb-3">
+        <main role="main" id="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
@@ -97,7 +114,7 @@
                         </ul>
                     </div>
 
-                    
+
 
                 </div>
             </div>
@@ -109,7 +126,7 @@
                 <div class="copyright">
                     &copy; Copyright <strong><span>Medilab</span></strong>. All Rights Reserved
                 </div>
-               
+
             </div>
             <div class="social-links text-center text-md-right pt-3 pt-md-0">
                 <a class="twitter"><i class="bx bxl-twitter"></i></a>
@@ -133,4 +150,15 @@
     <script src="~/js/main.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 </html>
+
+@functions {
+    public string IsActive(string controller, string action)
+    {
+        var currentAction = ViewContext.RouteData.Values["Action"] as string;
+        var currentController = ViewContext.RouteData.Values["Controller"] as string;
+
+        return (controller == currentController && action == currentAction) ? "active" : "";
+    }
+}
