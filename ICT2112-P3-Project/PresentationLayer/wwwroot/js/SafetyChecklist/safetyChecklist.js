@@ -43,7 +43,7 @@ window.addEventListener('DOMContentLoaded', function () {
                         'File uploaded successfully!',
                         'success'
                     ).then(function () {
-                        window.location.href = '/UploadPhotoInput/SafetyChecklist';
+                        window.location.href = '/SafetyChecklist/Index';
                     });
                 },
                 error: function (xhr, status, error) {

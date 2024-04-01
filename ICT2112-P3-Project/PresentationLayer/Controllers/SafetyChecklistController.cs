@@ -4,15 +4,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace PresentationLayer.Controllers
 {
-    public class SafetyChecklistInputController : Controller
+    public class SafetyChecklistController : Controller
     {
         private readonly SafetyChecklistControl _safetyChecklistControl;
 
-        public SafetyChecklistInputController(SafetyChecklistControl safetyChecklistControl)
+        public SafetyChecklistController(SafetyChecklistControl safetyChecklistControl)
         {
             _safetyChecklistControl = safetyChecklistControl;
         }
-
+        public IActionResult Index()
+        {
+            return View();
+        }
         public IActionResult ViewSafetyChecklist()
         {
             var safetyChecklists = _safetyChecklistControl.RetrieveAllSafetyChecklists();

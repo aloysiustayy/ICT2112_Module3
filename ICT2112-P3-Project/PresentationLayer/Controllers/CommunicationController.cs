@@ -5,18 +5,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace PresentationLayer.Controllers
 {
-    public class CommunicationInputController : Controller
+    public class CommunicationController : Controller
     {
         private readonly CommunicationControl _communicationControl;
 
-        public CommunicationInputController(CommunicationControl communicationControl)
+        public CommunicationController(CommunicationControl communicationControl)
         {
             _communicationControl = communicationControl;
         }
 
-        public IActionResult Communication()
+        public IActionResult Index()
         {
-            return View("~/Views/Home/Communication.cshtml");
+            return View();
         }
 
         [HttpPost]

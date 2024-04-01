@@ -18,7 +18,7 @@ namespace PresentationLayer.Controllers
 
         public IActionResult SafetyChecklist()
         {
-            return View("~/Views/Home/SafetyChecklist.cshtml");
+            return View("~/Views/SafetyChecklist/Index.cshtml");
         }
 
         [HttpPost]
