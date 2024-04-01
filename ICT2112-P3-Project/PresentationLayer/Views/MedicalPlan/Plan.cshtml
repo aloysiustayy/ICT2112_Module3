@@ -1,0 +1,44 @@
+﻿@model DomainLayer.Entity.PatientMedicalPlan
+@{
+    ViewData["Title"] = "Medical Plan Management";
+}
+
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="mt-5">
+                <h2>@ViewData["Title"]</h2>
+
+                <h2>Medical Plan Details</h2>
+                <p><strong>Plan Notes: </strong> @Model.PlanNotes</p>
+                <p><strong>Plan Start:</strong> @Model.PlanStart.ToString("yyyy-MM-dd")</p>
+                <p><strong>Plan End:</strong> @Model.PlanEnd.ToString("yyyy-MM-dd")</p>
+                <p><strong>Track Plan:</strong> @(Model.TrackPlan ? "Yes" : "No")</p>
+
+                <h3>Prescriptions</h3>
+                <hr />
+                @foreach (var item in Model.Prescriptions)
+                {
+                    <div>
+                        @if (!string.IsNullOrEmpty(item?.Drug?.DrugName))
+                        {
+                            <h4>@item.Drug.DrugName</h4>
+                        }
+                        @if (item.MedicationTracker != null)
+                        {
+                            if (item.MedicationTracker.TimesPerDay > 0)
+                            {
+                                <p>Times Per Day: @item.MedicationTracker.TimesPerDay</p>
+                            }
+                            <p>Before Meals: @(item.MedicationTracker.BeforeMeals ? "Yes" : "No")</p>
+                        }
+                    </div>
+                    <hr /> <!-- Draw a line after each loop -->
+                }
+
+
+
+            </div>
+        </div>
+    </div>
+</section>

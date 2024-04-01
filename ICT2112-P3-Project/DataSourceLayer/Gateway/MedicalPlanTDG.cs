@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,6 +24,13 @@ namespace DataSourceLayer.Gateway
         {
             // Use FindAsync for fetching entities by primary key
             return await _context.PatientMedicalPlans.FindAsync(planId);
+        }
+
+        public async Task<List<PatientMedicalPlan>> GetMedicalPlanByPatientIdAsync(int patientId)
+        {
+            return await _context.PatientMedicalPlans
+                                .Where(p => p.PatientId == patientId)
+                                .ToListAsync();
         }
 
         public async Task CreateMedicalPlanAsync(PatientMedicalPlan newPlan)
@@ -51,6 +59,59 @@ namespace DataSourceLayer.Gateway
             if (existingPlan != null)
             {
                 _context.PatientMedicalPlans.Remove(existingPlan);
+                await _context.SaveChangesAsync();
+            }
+        }
+    }
+    public class PrescriptionTDG : IPrescriptionTDG
+    {
+        private readonly DataContext _context;
+        public PrescriptionTDG(DataContext context)
+        {
+            _context = context;
+        }
+        public async Task<Prescription> GetPrescriptionByIdsAsync(long medicalPlanId, long medicationTrackerId, long drugId)
+        {
+            return await _context.Prescriptions.FindAsync(medicalPlanId, medicationTrackerId, drugId);
+        }
+
+        public async Task<List<Prescription>> GetPrescriptionsByMedicalPlanIdAsync(int planId)
+        {
+            return await _context.Prescriptions
+                                 .Where(p => p.PatientMedicalPlanId == planId)
+                                 .Include(p => p.Drug)
+                                 .Include(p => p.MedicationTracker)
+                                 .ToListAsync();
+        }
+
+        public async Task<Prescription> GetPrescriptionByTrackerIdAsync(int trackerId)
+        {
+            return await _context.Prescriptions
+                                 .Include(p => p.Drug)
+                                 .Include(p => p.MedicationTracker)
+                                 .FirstOrDefaultAsync(p => p.MedicationTrackerId == trackerId);
+        }
+
+        public async Task CreatePrescriptionAsync(Prescription prescription)
+        {
+            await _context.Prescriptions.AddAsync(prescription);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdatePrescriptionAsync(Prescription prescription)
+        {
+            _context.Prescriptions.Update(prescription);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeletePrescriptionAsync(long medicalPlanId, long medicationTrackerId, long drugId)
+        {
+            var prescription = await _context.Prescriptions
+                .FindAsync(medicalPlanId, medicationTrackerId, drugId);
+
+            if (prescription != null)
+            {
+                _context.Prescriptions.Remove(prescription);
                 await _context.SaveChangesAsync();
             }
         }
