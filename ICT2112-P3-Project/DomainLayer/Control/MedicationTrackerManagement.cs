@@ -55,8 +55,6 @@
             public async Task CheckForMissedOrIncorrectUploads(int patientId)
             {
 
-                
-
                 var prescriptions = await _prescriptionTDG.GetPrescriptionsByPatientIdAsync(patientId);
 
                 foreach (var prescription in prescriptions)
