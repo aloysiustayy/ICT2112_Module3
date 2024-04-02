@@ -10,12 +10,14 @@ namespace DomainLayer.Interface
     public interface ICommunicationTDG
     {
         //<Photo> in place of <CommsPlatformChat_SDM>
-        public List<Photo> CreateChat();
+        public void CreateChat(CommsPlatformChat_SDM chatId);
 
-        public List<Photo> InsertChat();
+        public CommsPlatformChat_SDM ReadChat(CommsPlatformChat_SDM chatId);
 
-        public List<Photo> UpdateChat();
+        public void UpdateChat(CommsPlatformChat_SDM chatId);
 
-        public List<Photo> DeleteChat();
+        public void DeleteChat(CommsPlatformChat_SDM chatId);
+
+        public void InsertZoomLink(CommsPlatformChat_SDM chatId);
     }
 }

@@ -22,6 +22,9 @@ public partial class DataContext : DbContext
 
     public virtual DbSet<Chatbot> Chatbots => Set<Chatbot>();
 
+    //Team 4
+    public virtual DbSet<CommsPlatformChat_SDM> Communication => Set<CommsPlatformChat_SDM>();
+
     public virtual DbSet<DischargeRecord> DischargeRecords => Set<DischargeRecord>();
 
     public virtual DbSet<Doctor> Doctors => Set<Doctor>();
@@ -528,6 +531,19 @@ public partial class DataContext : DbContext
 
             entity.Property(e => e.PhotoId).HasColumnName("photoId");
             entity.Property(e => e.PhotoImage).HasColumnName("photoImage");
+        });
+
+        modelBuilder.Entity<CommsPlatformChat_SDM>(entity =>
+        {
+            entity.ToTable("Communication");
+
+            entity.Property(e => e.ChatId).HasColumnName("chatId");
+            entity.Property(e => e.ChatDescription).HasColumnName("chatDescription");
+            entity.Property(e => e.MeetingTopic).HasColumnName("meetingTopic");
+            entity.Property(e => e.MeetingDateTime).HasColumnName("meetingDateTime");
+            entity.Property(e => e.MeetingDuration).HasColumnName("meetingDuration");
+            entity.Property(e => e.MeetingDescription).HasColumnName("meetingDescription");
+            entity.Property(e => e.ZoomLink).HasColumnName("zoomLink");
         });
 
         modelBuilder.Entity<PreDischargeService>(entity =>

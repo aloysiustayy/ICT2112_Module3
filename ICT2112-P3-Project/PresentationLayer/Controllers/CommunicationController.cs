@@ -1,6 +1,7 @@
 ﻿using DomainLayer.Control;
 using DomainLayer.Entity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Converters;
 
 
 namespace PresentationLayer.Controllers
@@ -20,29 +21,43 @@ namespace PresentationLayer.Controllers
         }
 
         [HttpPost]
-
         public IActionResult CreateZoomTable()
         {
-            // Logic to create a Zoom Table
-            // This might involve calling a service that interacts with a database or an API 
-
-            bool success = TryCreateZoomTable(); // This is a hypothetical method
-
-            if (success)
+            Console.WriteLine("1");
+            var meetingDetails = new CommsPlatformChat_SDM
             {
-                return RedirectToAction("Index"); // Redirect on success
+                ChatDescription = Request.Form["ChatDescription"],
+                MeetingTopic = Request.Form["MeetingTopic"],
+                MeetingDateTime = DateTime.Now.ToString(),
+                MeetingDuration = int.Parse(Request.Form["MeetingDuration"]),
+                MeetingDescription = Request.Form["MeetingDescription"],
+                ZoomLink = Request.Form["ZoomLink"]
+            };
+            if (!ModelState.IsValid)
+            {
+                Console.WriteLine("2");
+                return View(meetingDetails); // Return with errors
             }
-            else
+            Console.WriteLine("3");
+            try
             {
-                return RedirectToAction("Error"); // Return an error view or similar feedback on failure
+                Console.WriteLine("4");
+                Console.WriteLine(meetingDetails);
+                _communicationControl.CreateZoomMeeting(meetingDetails);
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+
+                // Log the exception
+                ModelState.AddModelError("", "An error occurred while scheduling the meeting.");
+                return View(meetingDetails);
             }
         }
-
-        // This method would contain the actual logic for creating a Zoom Table.
-        private bool TryCreateZoomTable()
+        public IActionResult MeetingScheduledSuccessfully()
         {
-            // Placeholder for actual logic
-            return true;
+            // Return a view that shows a success message or information after scheduling a meeting
+            return View();
         }
     }
 }

@@ -13,25 +13,35 @@ namespace DataSourceLayer.Gateway
             _context = context;
         }
 
-        //Placeholder for Chat DB for now
-        public List<Photo> CreateChat()
+        public void CreateChat(CommsPlatformChat_SDM chatId)
         {
-            return _context.Photos.ToList();
+            _context.Communication.Add(chatId);
+            _context.SaveChanges();
         }
 
-        public List<Photo> InsertChat()
+        public CommsPlatformChat_SDM ReadChat(CommsPlatformChat_SDM chatId)
         {
-            return _context.Photos.ToList();
+            return _context.Communication.Find(chatId);
         }
 
-        public List<Photo> UpdateChat()
+        public void UpdateChat(CommsPlatformChat_SDM chatId)
         {
-            return _context.Photos.ToList();
+            _context.Communication.Update(chatId);
+            _context.SaveChanges();
+
         }
 
-        public List<Photo> DeleteChat()
+        public void DeleteChat(CommsPlatformChat_SDM chatId)
         {
-            return _context.Photos.ToList();
+            _context.Communication.Remove(chatId);
+            _context.SaveChanges();
+
+        }
+
+        public void InsertZoomLink(CommsPlatformChat_SDM chatId)
+        {
+            _context.Communication.Add(chatId);
+            _context.SaveChanges();
         }
     }
 }
