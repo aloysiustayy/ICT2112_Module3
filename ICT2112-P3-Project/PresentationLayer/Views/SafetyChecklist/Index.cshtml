@@ -16,15 +16,15 @@
             <tr id="kitchen" class="collapse">
                 <td>
                     <div>
-                        <p>Risk Title: Floor is slippery</p>
-                        <p>Risk Comment: Resolve this soon</p>
+                        <p>Risk Title: Sharp Objects</p>
+                        <p>Risk Description: Risk of cuts or injuries from knives, scissors, or other sharp utensils.</p>
                         <!-- Photo upload section -->
                         <form method="post" enctype="multipart/form-data" action="/UploadPhotoInput/AddPhoto">
                             <div class="text-center" style="margin-top: 20px;">
                                 <input id="imageURLInput" name="imageURLInput" type="text" hidden>
                                 <label class="label" data-toggle="tooltip" title="Upload a profile picture">
                                     <img class="rounded" id="avatar"
-                                         src="https://cdn4.iconfinder.com/data/icons/social-communication/142/add_photo-512.png"
+                                         src="https://cdn2.iconfinder.com/data/icons/covid-19/64/25-Hot_cooking-512.png"
                                          alt="avatar" style="width: 200px; height: 200px;">
                                     <input type="file" class="sr-only" id="input" name="image" accept="image/*">
                                 </label>
@@ -43,8 +43,8 @@
             <tr id="bedroom" class="collapse">
                 <td>
                     <div>
-                        <p>Risk Title: Floor is slippery</p>
-                        <p>Risk Comment: Resolve this soon</p>
+                        <p>Risk Title: Fall Hazards</p>
+                        <p>Risk Description: Risk of falls from clutter on the floor, loose rugs, or obstacles in pathways.</p>
                         <!-- Photo upload section -->
                         <form method="post" enctype="multipart/form-data" action="/UploadPhotoInput/AddPhoto">
                             <div class="text-center" style="margin-top: 20px;">
@@ -70,124 +70,5 @@
             <tr id="bathroom" class="collapse">
                 <td>
                     <div>
-                        <p>Risk Title: Floor is slippery</p>
-                        <p>Risk Comment: Resolve this soon</p>
-                        <!-- Photo upload section -->
-                        <form method="post" enctype="multipart/form-data" action="/UploadPhotoInput/AddPhoto">
-                            <div class="text-center" style="margin-top: 20px;">
-                                <input id="imageURLInput" name="imageURLInput" type="text" hidden>
-                                <label class="label" data-toggle="tooltip" title="Upload a profile picture">
-                                    <img class="rounded" id="avatar"
-                                         src="https://cdn4.iconfinder.com/data/icons/social-communication/142/add_photo-512.png"
-                                         alt="avatar" style="width: 200px; height: 200px;">
-                                    <input type="file" class="sr-only" id="input" name="image" accept="image/*">
-                                </label>
-                            </div>
-                            <div class="modal-footer">
-                                <button id="submitButton" class="btn btn-primary">Upload Photo</button>
-                            </div>
-                        </form>
-                    </div>
-                </td>
-            </tr>
-            <!-- Livingroom Location Category -->
-            <tr data-toggle="collapse" data-target="#livingroom">
-                <td><strong>Living Room</strong></td>
-            </tr>
-            <tr id="livingroom" class="collapse">
-                <td>
-                    <div>
-                        <p>Risk Title: Floor is slippery</p>
-                        <p>Risk Comment: Resolve this soon</p>
-                        <!-- Photo upload section -->
-                        <form method="post" enctype="multipart/form-data" action="/UploadPhotoInput/AddPhoto">
-                            <div class="text-center" style="margin-top: 20px;">
-                                <input id="imageURLInput" name="imageURLInput" type="text" hidden>
-                                <label class="label" data-toggle="tooltip" title="Upload a profile picture">
-                                    <img class="rounded" id="avatar"
-                                         src="https://cdn4.iconfinder.com/data/icons/social-communication/142/add_photo-512.png"
-                                         alt="avatar" style="width: 200px; height: 200px;">
-                                    <input type="file" class="sr-only" id="input" name="image" accept="image/*">
-                                </label>
-                            </div>
-                            <div class="modal-footer">
-                                <button id="submitButton" class="btn btn-primary">Upload Photo</button>
-                            </div>
-                        </form>
-                    </div>
-                </td>
-            </tr>
-            <!-- Entrances Exits Location Category -->
-            <tr data-toggle="collapse" data-target="#entranceexit">
-                <td><strong>Entrances and Exits</strong></td>
-            </tr>
-            <tr id="entranceexit" class="collapse">
-                <td>
-                    <div>
-                        <p>Risk Title: Floor is slippery</p>
-                        <p>Risk Comment: Resolve this soon</p>
-                        <!-- Photo upload section -->
-                        <form method="post" enctype="multipart/form-data" action="/UploadPhotoInput/AddPhoto">
-                            <div class="text-center" style="margin-top: 20px;">
-                                <input id="imageURLInput" name="imageURLInput" type="text" hidden>
-                                <label class="label" data-toggle="tooltip" title="Upload a profile picture">
-                                    <img class="rounded" id="avatar"
-                                         src="https://cdn4.iconfinder.com/data/icons/social-communication/142/add_photo-512.png"
-                                         alt="avatar" style="width: 200px; height: 200px;">
-                                    <input type="file" class="sr-only" id="input" name="image" accept="image/*">
-                                </label>
-                            </div>
-                            <div class="modal-footer">
-                                <button id="submitButton" class="btn btn-primary">Upload Photo</button>
-                            </div>
-                        </form>
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-
-    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalLabel">Crop the image</h5>
-                    <button type="button" id="close" class="close" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="img-container">
-                        <img id="image" src="">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" id="cancel" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="crop">Crop</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ======= Hero Section ======= -->
-
-<!-- Bootstrap core JavaScript-->
-<script src="../js/SafetyChecklist/jquery/jquery.min.js"></script>
-<script src="../js/SafetyChecklist/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-<!-- Core plugin JavaScript-->
-<script src="../js/SafetyChecklist/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="../js/SafetyChecklist/jquery-easing/jquery.easing.min.js"></script>
-<!-- Cropper -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.css">
-
-<script src="../js/SafetyChecklist/safetyChecklist.js"></script>
-
-<!-- SweetAlert -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+                        <p>Risk Title: Slippery Surfaces</p>
+                        <p>Risk Description: Risk of slipping on wet floors, especially after using the shower or bath.</p>
