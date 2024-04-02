@@ -38,4 +38,9 @@
   <ItemGroup>
     <None Remove="Views\MedicalCounselling\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Chat\Chat.cshtml" />
+    <None Include="Views\Chat\Index.cshtml" />
+  </ItemGroup>
 </Project>

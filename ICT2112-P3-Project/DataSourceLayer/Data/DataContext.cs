@@ -85,6 +85,8 @@ public partial class DataContext : DbContext
     public virtual DbSet<MedicationTracker> MedicationTrackers => Set<MedicationTracker>();
     public virtual DbSet<Prescription> Prescriptions => Set<Prescription>();
     public virtual DbSet<ConsumedDateTime> ConsumedDateTimes => Set<ConsumedDateTime>();
+    public virtual DbSet<Users> Users => Set<Users>();
+    public virtual DbSet<TextMessage> TextMessages => Set<TextMessage>();
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlite("Data Source=..\\database.db;");
 
@@ -675,6 +677,32 @@ public partial class DataContext : DbContext
             entity.HasOne(d => d.Patient).WithMany(p => p.SafetyChecklistAssessments)
                 .HasForeignKey(d => d.PatientId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
+        });
+
+        modelBuilder.Entity<Users>(entity =>
+        {
+            entity.ToTable("Users");
+
+            entity.HasKey(e => e.id);
+
+            entity.Property(e => e.id).HasColumnName("id");
+            entity.Property(e => e.name).HasColumnName("name").HasColumnType("TEXT");
+            entity.Property(e => e.created_at).HasColumnName("created_at").HasColumnType("DATETIME");
+
+        });
+
+        modelBuilder.Entity<TextMessage>(entity =>
+        {
+            entity.ToTable("TextMessage"); // Defines the table name
+
+            entity.HasKey(e => e.id); // Defines the primary key
+
+            // Maps properties to columns with optional type configuration
+            entity.Property(e => e.id).HasColumnName("id");
+            entity.Property(e => e.sender_id).HasColumnName("sender_id").IsRequired(); // Assuming sender_id is required
+            entity.Property(e => e.receiver_id).HasColumnName("receiver_id").IsRequired(); // Assuming receiver_id is required
+            entity.Property(e => e.message).HasColumnName("message").HasColumnType("TEXT").IsRequired(); // Assuming message is required and of type TEXT
+            entity.Property(e => e.created_at).HasColumnName("created_at").HasColumnType("DATETIME"); // Assuming created_at is a DATETIME
         });
 
         OnModelCreatingPartial(modelBuilder);

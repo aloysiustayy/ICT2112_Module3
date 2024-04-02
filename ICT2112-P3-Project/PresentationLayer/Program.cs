@@ -4,6 +4,7 @@ using DataSourceLayer.Data;
 using DataSourceLayer.Gateway;
 using DomainLayer.Control;
 using DataSourceLayer.Interface;
+using DomainLayer.Factory;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,7 +46,8 @@ builder.Services.AddScoped<ISafetyChecklistTDG, SafetyChecklistTDG>();
 
 // Register the CommunicationControl
 builder.Services.AddScoped<ICommunicationTDG, CommunicationTDG>();
-
+builder.Services.AddScoped<IChatTDG, ChatTDG>();
+builder.Services.AddScoped<IMessageFactory, TextMessageFactory>();
 builder.Services.AddScoped<IMedicalPlanTDG, MedicalPlanTDG>();
 var app = builder.Build();
 
