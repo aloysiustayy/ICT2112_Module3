@@ -89,6 +89,7 @@ namespace DataSourceLayer.Gateway
             return await _context.Prescriptions
                                  .Include(p => p.Drug)
                                  .Include(p => p.MedicationTracker)
+                                 .Include(p => p.PatientMedicalPlan)
                                  .FirstOrDefaultAsync(p => p.MedicationTrackerId == trackerId);
         }
 

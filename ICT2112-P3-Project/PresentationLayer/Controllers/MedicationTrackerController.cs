@@ -14,6 +14,7 @@ namespace PresentationLayer.Controllers
         private readonly IDrugTDG _drugTDG;
         private readonly IConsumedDateTimeTDG _consumedDateTimeTDG;
 
+
         public MedicationTrackerController(ILogger<MedicationTrackerController> logger, IMedicalPlanTDG medicalPlanTDG, IOCR_API_TDG iOCR_API_TDG, 
             IPrescriptionTDG prescriptionTDG, IDrugTDG drugTDG, IConsumedDateTimeTDG consumedDateTimeTDG)
         {
@@ -54,6 +55,9 @@ namespace PresentationLayer.Controllers
                     string detectedText = await planManagement.ExecuteOCR(base64String);
                     Console.WriteLine(detectedText);
 
+                    await CheckForMissedOrIncorrectUploads(detectedText, selectedPrescriptionId);
+
+
                     return Json(new {success = true, detectedText, selectedPrescriptionId });
                 }
 
@@ -62,16 +66,81 @@ namespace PresentationLayer.Controllers
             return Json(new { success = false, errorMessage = "No file uploaded." });
         }
 
+
+        private async Task CheckForMissedOrIncorrectUploads(string detectedText, int selectedPrescriptionId)
+        {
+            var prescription = await _prescriptionTDG.GetPrescriptionByTrackerIdAsync(selectedPrescriptionId);
+            
+            if (prescription == null)
+            {
+                Console.WriteLine($"Prescription with ID {selectedPrescriptionId} not found");
+                return;
+            }
+
+            // Add a null check for prescription.PatientMedicalPlan before accessing PlanStart
+            if (prescription.PatientMedicalPlan == null)
+            {
+                Console.WriteLine($"Isaac's function: PatientMedicalPlan for prescription {selectedPrescriptionId} not found.");
+                return;
+            }
+
+            var drugName = prescription.Drug?.DrugName;
+
+            if (string.IsNullOrWhiteSpace(drugName) || !detectedText.Contains(drugName))
+            {
+                Console.WriteLine($"Isaac's function: The uploaded image for prescription {selectedPrescriptionId} does not match the prescribed medication: {drugName}. Call notify nurse function");
+                return; // Exiting the method if the drug doesn't match.
+            }
+
+
+            // Assuming TimesPerDay and PlanStart are accessible from the prescription or its related entities.
+            var timesPerDay = prescription.MedicationTracker.TimesPerDay;
+            // find how to properly access PlanStart
+            var planStart = prescription.PatientMedicalPlan.PlanStart;
+
+            // Check if the detected text matches the prescribed drug name
+            if (!detectedText.Contains(drugName))
+            {
+                Console.WriteLine($"The uploaded image for prescrtion {selectedPrescriptionId} does not match the prescribed medication: {drugName}.");
+                return; // Exiting the method if the drug doesn't match.
+            }
+
+            // Checking if upload is within the correct time window based on timesPerDay
+            var now = DateTime.Now;
+            var hoursSincePlanStart = (now - planStart).TotalHours;
+            var windowSize = 24 / timesPerDay;
+            var currentWindow = (int)Math.Floor(hoursSincePlanStart / windowSize);
+            var windowStart = planStart.AddHours(windowSize * currentWindow);
+            var windowEnd = windowStart.AddHours(windowSize);
+
+            if (now < windowStart || now > windowEnd)
+            {
+                Console.WriteLine($"The upload time for prescription {selectedPrescriptionId} is outside the expected window. Current time: {now}, Expected window {windowStart} to {windowEnd}");
+
+            }
+            else
+            {
+                Console.WriteLine($"Upload for prescription {selectedPrescriptionId} is within the expected window");
+            }
+
+        }
+
+
         [HttpGet]
         public async Task<IActionResult> GetPrescriptionsForMedicalPlan(int medicalPlanId)
         {
             PrescriptionManagement prescriptionManagement = new PrescriptionManagement(_prescriptionTDG);
             var prescriptions = await prescriptionManagement.GetMedicalPlanAllPrescriptions(medicalPlanId);
+            
             var result = prescriptions.Select(p => new {
                 PrescriptionId = p.MedicationTrackerId, // or another unique identifier for the dropdown value
                 PrescriptionDetails = $"{p.Drug.DrugName}" // Example format
             }).ToList();
+            // Shows the prescription ID selected, as well as the prescription details. 
+            Console.WriteLine("Isaac testing: " + result.Aggregate("", (current, item) => current + $"PrescriptionId = {item.PrescriptionId}, PrescriptionDetails = {item.PrescriptionDetails}\n"));
+
             return Json(result);
+            
         }
 
         [HttpPost]
