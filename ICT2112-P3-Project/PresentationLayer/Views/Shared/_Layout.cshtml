@@ -57,6 +57,9 @@
                         <!-- Team 4 -->
                     <li><a class="nav-link @((ViewContext.RouteData.Values["controller"].ToString() == "SafetyChecklist") ? "active" : "")"
                            asp-controller="SafetyChecklist" asp-action="Index">Safety Checklist</a>
+                    <li><a class="nav-link @((ViewContext.RouteData.Values["controller"].ToString() == "DocumentationInput") ? "active" : "")"
+                           asp-controller="DocumentationInput" asp-action="Documentation">Documentation</a>
+
                     <li>
                         <a class="nav-link @((ViewContext.RouteData.Values["controller"].ToString() == "Communication") ? "active" : "")"
                            asp-controller="Communication" asp-action="Index">Communication</a>
