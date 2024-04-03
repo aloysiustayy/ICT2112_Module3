@@ -11,7 +11,7 @@ namespace DomainLayer.Interface
     {
         public void SetSelectedDrugs(List<Prescription> selectedDrugs);
         public void SetPrescriptions(List<Prescription> prescription);
-
+        public void SetPlanDetails(bool trackPlan, string notes, DateTime start, DateTime end, long patientId, long assignedByNurseId);
         PatientMedicalPlan Build();
 
     }
