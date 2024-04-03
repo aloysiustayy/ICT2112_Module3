@@ -103,10 +103,6 @@
                 <!-- Add more sections as necessary -->
             </tbody>
         </table>
-        <div>
-    <label for="pdfPassword">PDF Password:</label>
-    <input type="password" id="pdfPassword" name="pdfPassword">
-</div>
 
         <!-- Add a submit button -->
         <button type="submit" class="btn btn-primary">Save</button>
@@ -162,56 +158,53 @@
 
     <script>
     document.getElementById('exportPdfButton').addEventListener('click', function() {
-    // Get the password value from the input field
-    var pdfPassword = document.getElementById('pdfPassword').value.trim();
+        // Get all sections of the form
+        var sections = document.querySelectorAll('tr[data-toggle="collapse"]');
+        var safetyChecklists = [];
 
-    // Get all sections of the form
-    var sections = document.querySelectorAll('tr[data-toggle="collapse"]');
-    var safetyChecklists = [];
+        // Iterate over each section
+        sections.forEach(function(section, index) {
+            // Get input values from the section
+            var locationCategory = section.querySelector('strong').textContent.trim();
+            var riskTitle = section.nextElementSibling.querySelector('input[name="RiskTitle"]').value.trim();
+            var riskComment = section.nextElementSibling.querySelector('input[name="RiskComment"]').value.trim();
+            var riskDescription = section.nextElementSibling.querySelector('input[name="RiskDescription"]').value.trim();
 
-    // Iterate over each section
-    sections.forEach(function(section, index) {
-        // Get input values from the section
-        var locationCategory = section.querySelector('strong').textContent.trim();
-        var riskTitle = section.nextElementSibling.querySelector('input[name="RiskTitle"]').value.trim();
-        var riskComment = section.nextElementSibling.querySelector('input[name="RiskComment"]').value.trim();
-        var riskDescription = section.nextElementSibling.querySelector('input[name="RiskDescription"]').value.trim();
+            // Create a safety checklist object
+            var checklist = {
+                LocationCategory: locationCategory,
+                RiskTitle: riskTitle,
+                RiskComment: riskComment,
+                RiskDescription :riskDescription
+            };
 
-        // Create a safety checklist object
-        var checklist = {
-            LocationCategory: locationCategory,
-            RiskTitle: riskTitle,
-            RiskComment: riskComment,
-            RiskDescription: riskDescription
+            // Add the safety checklist object to the array
+            safetyChecklists.push(checklist);
+        });
+
+        // Make an AJAX request to the controller action for exporting to PDF
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/DocumentationInput/ExportSafetyChecklistToPDF', true);
+        xhr.setRequestHeader('Content-Type', 'application/json'); // Set content type to JSON
+        xhr.responseType = 'blob'; // Response type as blob for binary data
+        xhr.onload = function() {
+            if (this.status === 200) {
+                // Create a blob URL for the response blob
+                var blobUrl = window.URL.createObjectURL(this.response);
+                // Create a link element to trigger the download
+                var a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = 'SafetyChecklist.pdf';
+                // Append the link to the body and trigger the click event
+                document.body.appendChild(a);
+                a.click();
+                // Remove the link element from the body
+                document.body.removeChild(a);
+            }
         };
-
-        // Add the safety checklist object to the array
-        safetyChecklists.push(checklist);
+        // Send the safety checklist data as JSON
+        xhr.send(JSON.stringify(safetyChecklists));
     });
-
-    // Make an AJAX request to the controller action for exporting to PDF with password
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/DocumentationInput/ExportSafetyChecklistToPDF', true);
-    xhr.setRequestHeader('Content-Type', 'application/json'); // Set content type to JSON
-    xhr.responseType = 'blob'; // Response type as blob for binary data
-    xhr.onload = function() {
-        if (this.status === 200) {
-            // Create a blob URL for the response blob
-            var blobUrl = window.URL.createObjectURL(this.response);
-            // Create a link element to trigger the download
-            var a = document.createElement('a');
-            a.href = blobUrl;
-            a.download = 'SafetyChecklist.pdf';
-            // Append the link to the body and trigger the click event
-            document.body.appendChild(a);
-            a.click();
-            // Remove the link element from the body
-            document.body.removeChild(a);
-        }
-    };
-    // Send the safety checklist data and password as JSON
-    xhr.send(JSON.stringify({ safetyChecklists: safetyChecklists, password: pdfPassword }));
-});
 </script>
 </section>
 <!-- End Hero -->

@@ -8,7 +8,6 @@ using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
 using iText.Layout.Properties;
-using System.Text;
 
 namespace PresentationLayer.Controllers
 {
@@ -42,30 +41,30 @@ namespace PresentationLayer.Controllers
             _safetyChecklistControl.UpdateSafetyChecklist(safetyChecklist);
             return RedirectToAction("SafetyChecklist");
         }
+
+        [HttpPost] // Handle POST requests for exporting to PDF
+        public IActionResult ExportSafetyChecklistToPDF([FromBody] List<SafetyChecklist> safetyChecklists)
+        {
+            // Generate PDF content
+            byte[] pdfBytes = GeneratePdf(safetyChecklists);
+
+            // Return the PDF file as a file download
+            return File(pdfBytes, "application/pdf", "SafetyChecklist.pdf");
+        }
+
         public IActionResult Documentation()
         {
             // Return the Documentation view
             return View("~/Views/SafetyChecklist/Documentation.cshtml");
         }
 
-
-        [HttpPost] // Handle POST requests for exporting to PDF
-        public IActionResult ExportSafetyChecklistToPDF([FromBody] ExportPdfRequestModel requestModel)
-        {
-            // Generate PDF content
-            byte[] pdfBytes = GeneratePdf(requestModel.SafetyChecklists, requestModel.Password);
-
-            // Return the PDF file as a file download
-            return File(pdfBytes, "application/pdf", "SafetyChecklist.pdf");
-        }
-
-        private byte[] GeneratePdf(IEnumerable<SafetyChecklist> safetyChecklists, string password)
+        private byte[] GeneratePdf(IEnumerable<SafetyChecklist> safetyChecklists)
         {
             // Create a memory stream to store the PDF content
             using (MemoryStream stream = new MemoryStream())
             {
-                // Create a PdfWriter to write to the memory stream with encryption
-                using (PdfWriter writer = new PdfWriter(stream, new WriterProperties().SetStandardEncryption(Encoding.UTF8.GetBytes(password), Encoding.UTF8.GetBytes(password), EncryptionConstants.ALLOW_PRINTING, EncryptionConstants.ENCRYPTION_AES_128)))
+                // Create a PdfWriter to write to the memory stream
+                using (PdfWriter writer = new PdfWriter(stream))
                 {
                     // Create a PdfDocument
                     using (PdfDocument pdf = new PdfDocument(writer))
@@ -90,11 +89,5 @@ namespace PresentationLayer.Controllers
                 return stream.ToArray();
             }
         }
-    }
-
-    public class ExportPdfRequestModel
-    {
-        public List<SafetyChecklist> SafetyChecklists { get; set; }
-        public string Password { get; set; }
     }
 }
