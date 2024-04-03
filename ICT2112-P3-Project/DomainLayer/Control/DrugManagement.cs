@@ -8,7 +8,7 @@ using DomainLayer.Interface;
 
 namespace DomainLayer.Control
 {
-    public class DrugManagement
+    public class DrugManagement : IDrug
     {
         private readonly IDrugTDG _drugDbContext;
 

@@ -23,10 +23,10 @@ namespace PresentationLayer.Controllers
         }
 
         [HttpPost]
-        public IActionResult UploadRecord(long[] drugNames, string[] drugDescs)
+        public IActionResult UploadRecord(long[] drugIDs, string[] drugDescs)
         {
             // Ensure drugNames and drugDescs are not null and have the same length
-            if (drugNames == null)
+            if (drugIDs == null)
             {
                 // Handle error - Redirect to an error page or return an error response
                 return RedirectToAction("Error");
@@ -35,9 +35,9 @@ namespace PresentationLayer.Controllers
             DrugRecordManagement drugRecordManagement = new DrugRecordManagement(_drugRecordTDG);
             List<KeyValuePair<Drug, string>> drugsWithDesc = new List<KeyValuePair<Drug, string>>();
 
-            for (int i = 0; i < drugNames.Length; i++)
+            for (int i = 0; i < drugIDs.Length; i++)
             {
-                var drugName = drugNames[i];
+                var drugName = drugIDs[i];
                 var drugDesc = "";
                 if (i <= drugDescs.Length)
                     drugDesc = drugDescs[i];
