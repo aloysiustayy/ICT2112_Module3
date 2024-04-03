@@ -1,0 +1,159 @@
+﻿@model PresentationLayer.ViewModel.ChatViewModel
+
+@{
+    ViewData["Title"] = "Chat";
+}
+<div class="chat-room-container">
+
+    <div id="messages-container">
+@foreach (var message in Model.Messages)
+{
+    <div class="message @(message.sender_id == Model.CurrentUserId ? "outgoing" : "incoming")">
+        <div class="message-content">
+            @if (message.sender_id != Model.CurrentUserId)
+            {
+                <strong>@Model.ChatPartnerName:</strong>
+            }
+            @message.message
+        </div>
+        <div class="message-time"><small>@message.created_at.ToString("o")</small></div>
+    </div>
+}
+    </div>
+
+    <form id="messageForm">
+        <input type="hidden" name="senderId" value="@Model.CurrentUserId" />
+        <input type="hidden" name="receiverId" value="@Model.ChatPartnerId" />
+        <textarea name="message" placeholder="Type a message..." required></textarea>
+        <button type="submit">Send</button>
+    </form>
+
+    <h2>Chat with @Model.ChatPartnerName</h2>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#messageForm').submit(function (e) {
+                e.preventDefault();
+                var messageData = $(this).serialize();
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("SendMessage", "Chat")',
+                    data: messageData,
+                    success: function (response) {
+                        if (response.success) {
+                            var isOutgoing = true; // Since the message we're sending is always outgoing
+                            var messageElement = createMessageElement(response, isOutgoing);
+                            $('#messages-container').append(messageElement);
+                            $('textarea[name="message"]').val('');
+                            $('#messages-container').scrollTop($('#messages-container')[0].scrollHeight);
+                        }
+                    }
+                });
+            });
+
+            function fetchMessages() {
+                var userId = '@Model.CurrentUserId';
+                var chatPartnerId = '@Model.ChatPartnerId';
+                $.ajax({
+                    url: '@Url.Action("RetrieveMessages", "Chat")' + '?userId=' + userId + '&chatPartnerId=' + chatPartnerId,
+                    success: function (messages) {
+                        $('#messages-container').empty();
+                        messages.forEach(function (message) {
+                            var isOutgoing = message.sender_id === '@Model.CurrentUserId';
+                            var messageElement = createMessageElement(message, isOutgoing);
+                            $('#messages-container').append(messageElement);
+                        });
+                        $('#messages-container').scrollTop($('#messages-container')[0].scrollHeight);
+                    }
+                });
+            }
+function createMessageElement(message, isOutgoing) {
+    var messageClass = isOutgoing ? 'outgoing' : 'incoming';
+    var createdAt = new Date(message.created_at);
+    if (isNaN(createdAt)) {
+        // Fallback in case of parsing failure
+        createdAt = new Date();
+    }
+    var formattedDate = createdAt.toLocaleString();
+    var messageElement = $('<div class="message ' + messageClass + '">');
+    var messageContent = $('<div class="message-content">').text(message.message);
+    var messageTime = $('<div class="message-time">').html('<small>' + formattedDate + '</small>');
+
+    // Display chat partner's name only for incoming messages
+    if (!isOutgoing) {
+        messageContent.prepend($('<strong>').text('@Model.ChatPartnerName: '));
+    }
+
+    messageElement.append(messageContent).append(messageTime);
+    return messageElement;
+}
+
+
+            // Fetch new messages every 5 seconds
+            setInterval(fetchMessages, 5000);
+        });
+    </script>
+
+<style>
+    .chat-room-container {
+        border: 1px solid #ccc;
+        padding: 10px;
+        width: 100%; /* Set width to cover the whole page */
+        height: 100vh; /* Set height to cover the whole viewport */
+        display: flex;
+        flex-direction: column;
+        background-color: #fff; /* Set background color to white */
+    }
+
+    #messages-container {
+        overflow-y: auto;
+        flex-grow: 1;
+        margin-bottom: 10px;
+        padding: 5px;
+        border: 1px solid #ccc; /* Add a border and some padding around the messages */
+        background-color: #fff; /* Set background color to white */
+    }
+
+    .message {
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 10px; /* Rounded corners for messages */
+        color: #000; /* Set text color to black */
+        background-color: #fff; /* Set background color to white */
+    }
+
+    .message-content {
+        margin-bottom: 5px;
+    }
+
+    .message-time {
+        text-align: right;
+        font-size: 0.85em;
+        color: #000; /* Set timestamp color to black */
+    }
+
+    form#messageForm {
+        display: flex;
+        gap: 10px;
+    }
+
+    form#messageForm textarea {
+        flex-grow: 1;
+        padding: 10px;
+        color: #000; /* Set text color to black */
+        background-color: #fff; /* Set background color to white */
+        border: 1px solid #ccc; /* Optional: add a border to the textarea */
+    }
+
+    form#messageForm button {
+        padding: 10px 20px;
+        color: #000; /* Set button text color to black */
+        background-color: #fff; /* Set button background color to white */
+        border: 1px solid #ccc; /* Optional: add a border to the button */
+    }
+</style>
+
+}

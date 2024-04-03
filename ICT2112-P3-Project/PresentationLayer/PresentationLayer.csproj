@@ -8,6 +8,9 @@
 
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
   <ItemGroup>
+    <PackageReference Include="itext7" Version="8.0.3" />
+    <PackageReference Include="itext7.bouncy-castle-adapter" Version="8.0.3" />
+    <PackageReference Include="iTextSharp" Version="5.5.13.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.16" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.16">
       <PrivateAssets>all</PrivateAssets>
@@ -34,5 +37,10 @@
 
   <ItemGroup>
     <None Remove="Views\MedicalCounselling\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Chat\Chat.cshtml" />
+    <None Include="Views\Chat\Index.cshtml" />
   </ItemGroup>
 </Project>

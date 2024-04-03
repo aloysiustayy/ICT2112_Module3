@@ -13,6 +13,16 @@ public class CommsPlatformChat_SDM
         messages = new List<IMessage>();
     }
 
+    [System.ComponentModel.DataAnnotations.Key]
+    public long ChatId { get; set; }
+    public string ChatDescription { get; set; }
+    public string MeetingTopic { get; set; }
+    public string MeetingDateTime { get; set; }
+    public int MeetingDuration { get; set; }
+    public string MeetingDescription { get; set; }
+    public string ZoomLink { get; set; }
+
+
     // Get the chat ID
     private int getChatId()
     {

@@ -1,0 +1,11 @@
+﻿@model IEnumerable<DomainLayer.Entity.Users>
+
+<h2>Select a Chat Partner</h2>
+<ul>
+    @foreach (var user in Model)
+    {
+        <li>
+            <a href="@Url.Action("Chat", new { userId = ViewBag.CurrentUserId, chatPartnerId = user.id })">@user.name</a>
+        </li>
+    }
+</ul>

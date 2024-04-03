@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DomainLayer.Interface
+namespace DomainLayer.Entity
 {
     public interface IMessage
     {
-        void SendMessage();
-        void AddMessage();
-        void RemoveMessage();
+        int id { get; set; }
+        int sender_id { get; set; }
+        int receiver_id { get; set; }
+        DateTime created_at { get; set; }
     }
 }

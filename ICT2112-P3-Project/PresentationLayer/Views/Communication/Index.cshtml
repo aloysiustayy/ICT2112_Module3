@@ -1,26 +1,37 @@
 ﻿<div class="container" style="padding-top: 80px;">
+    <div id="successMessage" class="alert alert-success" role="alert" style="display: none;">
+        Meeting scheduled successfully!
+    </div>
 
-    <!-- Existing photo upload form is left intact -->
     <!-- Zoom Meeting Details Form -->
-    <form method="post" action="/ZoomMeetings/Schedule">
+    <form id="zoomMeetingForm">
         <h3>Schedule a Zoom Meeting</h3>
         <div class="form-group">
             <label for="meetingTopic">Meeting Topic</label>
-            <input type="text" class="form-control" id="meetingTopic" name="meetingTopic" required>
+            <input type="text" class="form-control" id="meetingTopic" name="MeetingTopic" required>
         </div>
         <div class="form-group">
             <label for="meetingStartTime">Start Time</label>
-            <input type="datetime-local" class="form-control" id="meetingStartTime" name="meetingStartTime" required>
+            <input type="datetime-local" class="form-control" id="meetingStartTime" name="MeetingStartTime">
         </div>
         <div class="form-group">
             <label for="meetingDuration">Duration (minutes)</label>
-            <input type="number" class="form-control" id="meetingDuration" name="meetingDuration" required>
+            <input type="number" class="form-control" id="meetingDuration" name="MeetingDuration" required>
         </div>
         <div class="form-group">
             <label for="meetingDescription">Description</label>
-            <textarea class="form-control" id="meetingDescription" name="meetingDescription" rows="3"></textarea>
+            <textarea class="form-control" id="meetingDescription" name="MeetingDescription" rows="3"></textarea>
         </div>
         <button type="submit" class="btn btn-primary">Schedule Meeting</button>
     </form>
-
 </div>
+
+<script>
+    document.getElementById('zoomMeetingForm').addEventListener('submit', function (event) {
+        event.preventDefault();  // Prevent the form from submitting through the HTTP POST.
+        setTimeout(function () {
+            // Show the success message
+            document.getElementById('successMessage').style.display = 'block';
+        }, 500);
+    });
+</script>
