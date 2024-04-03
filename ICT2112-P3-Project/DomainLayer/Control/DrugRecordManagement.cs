@@ -7,49 +7,16 @@ using DomainLayer.Interface;
 
 namespace DomainLayer.Control
 {
-    public class DrugRecordManagement
+    public class DrugRecordManagement : IDrugRecord
     {
-        private readonly IDrugRecordTDG _administratorDbContext;
+        private readonly IDrugRecordTDG _drugRecordDbContext;
 
-        public DrugRecordManagement(IDrugRecordTDG administratorDbContext)
+        public DrugRecordManagement(IDrugRecordTDG drugRecordDbContext)
         {
-            _administratorDbContext = administratorDbContext;
+            _drugRecordDbContext = drugRecordDbContext;
         }
-        public List<DrugRecord> retrieveAllRecord()
-        {
-            return _administratorDbContext.RetrieveAllDrugRecord();
-        }
-        public DrugRecord retrieveRecord(long patientID)
-        {
-            return _administratorDbContext.GetDrugRecordByPatientId(patientID);
-        }
-        public List<DrugRecord> retrieveDrugRecords(long patientID)
-        {
-            return _administratorDbContext.GetDrugRecordsByPatientId(patientID);
 
-        }
-        public DrugRecordDrug retrieveDrugRecordDrug(long patientID)
-        {
-            return _administratorDbContext.GetDrugRecordDrug(patientID);
-        }
-        public List<DrugRecordDrug> retrieveDrugRecordDrugs(long patientID)
-        {
-            return _administratorDbContext.GetDrugRecordDrugs(patientID);
-        }
-        // Console.WriteLine("Creating...");
-        // DrugRecord drugRecord = new DrugRecord { PatientID = patientId };
-
-        // // Initialize the collection if it's null
-        // drugRecord.DrugRecordDrugs ??= new HashSet<DrugRecordDrug>();
-
-        // foreach (var drug in drugs)
-        // {
-        //     drugRecord.DrugRecordDrugs.Add(new DrugRecordDrug { Drug = drug });
-        // }
-        // Console.WriteLine("Adding...");
-        // _administratorDbContext.CreateDrugRecord(drugRecord);
-        // Console.WriteLine("Added!");
-        public void createDrugRecord(long patientId, List<KeyValuePair<Drug, string>> newRecord)
+        public void CreateDrugRecord(long patientId, List<KeyValuePair<Drug, string>> newRecord)
         {
             DrugRecord newDrugRecord = new DrugRecord { PatientID = patientId };
 
@@ -80,43 +47,23 @@ namespace DomainLayer.Control
                 Console.WriteLine("=====DONE=====");
             }
             Console.WriteLine("=====END=====");
-            _administratorDbContext.CreateDrugRecord(newDrugRecord);
+            _drugRecordDbContext.CreateDrugRecord(newDrugRecord);
         }
-        // public void createDrugRecord(long patientId, List<Drug> drugs, List<String> drugs)
-        // {
-        //     Console.WriteLine("Creating...");
-        //     DrugRecord drugRecord = new DrugRecord { PatientID = patientId };
 
-        //     // Initialize the collection if it's null
-        //     drugRecord.DrugRecordDrugs ??= new HashSet<DrugRecordDrug>();
+        public List<DrugRecordDrug> RetrieveDrugRecordDrugs(long patientID)
+        {
+            return _drugRecordDbContext.GetDrugRecordDrugs(patientID);
+        }
 
-        //     foreach (var drug in drugs)
-        //     {
-        //         drugRecord.DrugRecordDrugs.Add(new DrugRecordDrug { Drug = drug });
-        //     }
-        //     Console.WriteLine("Adding...");
-        //     _administratorDbContext.CreateDrugRecord(drugRecord);
-        //     Console.WriteLine("Added!");
-        // }
-        // public List<Administrator> RetrieveAllAdministrativeAccount()
-        // {
-        //     return _administratorDbContext.GetAllAdministrators();
-        // }
+        public void UpdateRecord(long patientID, List<KeyValuePair<Drug, string>> newRecord)
+        {
+            DeleteRecord(patientID);
+            CreateDrugRecord(patientID, newRecord);
+        }
 
-
-        /*        public void CreateAdministrativeAccount() {
-                    Administrator c = new Administrator();
-                    c.AdministratorId = 1;
-                    c.Identifier = "admin1";
-                    c.Password = "password123";
-                    c.NRIC = "123456789";
-                    c.FullName = "John Doe";
-                    c.Nationality = "US";
-                    c.PhoneNumber = 1234567890;
-                    c.EmailAddress = "admin@example.com";
-                    c.PreferredNotificationPlatform = "Email";
-
-                    _administratorDbContext.AddAdministrator(c);
-                }*/
+        public void DeleteRecord(long patientID)
+        {
+            _drugRecordDbContext.DeleteDrugRecord(patientID);
+        }
     }
 }

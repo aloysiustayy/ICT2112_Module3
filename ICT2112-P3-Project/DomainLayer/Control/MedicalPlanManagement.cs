@@ -3,6 +3,7 @@ using DomainLayer.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -28,7 +29,7 @@ namespace DomainLayer.Control
         {
             throw new NotImplementedException();
         }
-        
+
         public async Task<string> ExecuteOCR(string base64EncodedImage)
         {
             var ocrResult = await _iOCR_API_TDG.DetectText(base64EncodedImage);
@@ -40,19 +41,7 @@ namespace DomainLayer.Control
             throw new NotImplementedException();
         }
 
-        public async Task<long> CreateEmptyMedicalPlanAsync()
-        {
-            var newPlan = new PatientMedicalPlan
-            {
-                PlanNotes = "",
-                PlanStart = DateTime.Now,
-                PlanEnd = DateTime.Now
-            };
-            await _medicalPlanTDG.CreateMedicalPlanAsync(newPlan);
-            return newPlan.PlanId;
-        }
-
-        public async Task<PatientMedicalPlan> CreateMedicalPlan(long patientId, string planNotes, DateTime planStart, DateTime planEnd, bool trackPlan, long assignedByNurseID) 
+        public async Task<PatientMedicalPlan> CreateMedicalPlan(long patientId, string planNotes, DateTime planStart, DateTime planEnd, bool trackPlan, long assignedByNurseID)
         {
             var newPlan = new PatientMedicalPlan
             {
@@ -88,7 +77,7 @@ namespace DomainLayer.Control
     {
         private readonly IPrescriptionTDG _prescriptionTDG;
 
-        public PrescriptionManagement (IPrescriptionTDG prescriptionTDG)
+        public PrescriptionManagement(IPrescriptionTDG prescriptionTDG)
         {
             _prescriptionTDG = prescriptionTDG;
         }
@@ -103,7 +92,7 @@ namespace DomainLayer.Control
             return await _prescriptionTDG.GetPrescriptionByTrackerIdAsync(trackerId);
         }
 
-        public async Task<Prescription> CreatePrescription (long medicalPlanId, long medicationTrackerId, long drugId)
+        public async Task<Prescription> CreatePrescription(long medicalPlanId, long medicationTrackerId, long drugId)
         {
             var newPrescription = new Prescription
             {

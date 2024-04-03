@@ -5,47 +5,37 @@ using System.Text;
 
 namespace DomainLayer.Control
 {
-	public class MedicalCounsellingManagement
-	{
-		private readonly IMedicalCounsellingTDG _administratorDbContext;
+    public class MedicalCounsellingManagement : IMedicalCounselling
+    {
+        private readonly IMedicalCounsellingTDG _medicalCounsellingDbContext;
 
-		public MedicalCounsellingManagement(IMedicalCounsellingTDG administratorDbContext)
-		{
-			_administratorDbContext = administratorDbContext;
-		}
-
-		public List<MedicationCounselling> retrieveAllRecord()
-		{
-			return _administratorDbContext.RetrieveAllMedicalCounselling();
-		}
-
-		public MedicationCounselling retrieveMedicalCounselling(long patientID)
-		{
-			return _administratorDbContext.GetMedicalCounsellingByPatientId(patientID);
-		}
-
-        //public List<MedicationCounselling> retrieveMedicalCounsellings(long patientID)
-        //{
-        //    return _administratorDbContext.GetMedicalCounsellingsByPatientId(patientID);
-        //}
-
-        public Patient getPatient(long patientID)
+        public MedicalCounsellingManagement(IMedicalCounsellingTDG medicalCounsellingDbContext)
         {
-            return _administratorDbContext.GetPatientById(patientID);
+            _medicalCounsellingDbContext = medicalCounsellingDbContext;
+        }
+
+        public List<MedicationCounselling> RetrieveAllRecord()
+        {
+            return _medicalCounsellingDbContext.RetrieveAllMedicalCounselling();
+        }
+
+        public Patient GetPatient(long patientID)
+        {
+            return _medicalCounsellingDbContext.GetPatientById(patientID);
         }
 
 
-		public void createMedicalCounselling(long patientId, string medicalCounsellingChoice, string additionalNotes)
-		{
+        public void CreateMedicalCounselling(long patientID, string medicalCounsellingChoice, string additionalNotes)
+        {
 
-            Console.WriteLine("Patient: "+ getPatient(patientId));
+            Console.WriteLine("Patient: " + GetPatient(patientID));
 
-            var patient = getPatient(patientId);
+            var patient = GetPatient(patientID);
 
             // Create a new instance of MedicationCounselling
             MedicationCounselling newMedicationCounselling = new MedicationCounselling
             {
-                PatientId = patientId,
+                PatientId = patientID,
                 // Convert the string to a byte array using ASCII encoding
                 MedicationCounsellingChoice = Encoding.ASCII.GetBytes(medicalCounsellingChoice),
                 MedicationCounsellingDescription = additionalNotes,
@@ -58,11 +48,11 @@ namespace DomainLayer.Control
             Console.WriteLine("=====INSERTING=====");
             Console.WriteLine("Medical Counselling Choice: " + medicalCounsellingChoice);
             Console.WriteLine("Additional Notes: " + additionalNotes);
-            Console.WriteLine("Patient ID: " + patientId);
+            Console.WriteLine("Patient ID: " + patientID);
             Console.WriteLine("=====END=====");
 
             // Call the method to create the MedicationCounselling record in the database
-            _administratorDbContext.CreateMedicalCounselling(newMedicationCounselling);
+            _medicalCounsellingDbContext.CreateMedicalCounselling(newMedicationCounselling);
         }
 
     }

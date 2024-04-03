@@ -51,7 +51,7 @@ namespace PresentationLayer.Controllers
             }
 
             // Assuming createDrugRecord expects a patientId and a list of KeyValuePair<Drug, string>
-            drugRecordManagement.createDrugRecord(patientID, drugsWithDesc);
+            drugRecordManagement.CreateDrugRecord(patientID, drugsWithDesc);
             Console.WriteLine("Creating!!!");
             // _logger.LogInformation("Generating plan for plan ID {PlanId}", planId);
             return RedirectToAction("UploadRecord");
@@ -66,12 +66,12 @@ namespace PresentationLayer.Controllers
 
             var viewModel = new DrugRecordViewModel
             {
-                Drugs = dm.retrieveAllDrug(),
-                DrugRecordDrug = ac.retrieveDrugRecordDrugs(patientID)
+                Drugs = dm.RetrieveAllDrug(),
+                DrugRecordDrug = ac.RetrieveDrugRecordDrugs(patientID)
                 // DrugRecord = ac.retrieveRecord(patientID)
             };
-            Console.WriteLine("DrugRecordDrug:" + ac.retrieveDrugRecordDrugs(patientID));
-            foreach (DrugRecordDrug z in ac.retrieveDrugRecordDrugs(patientID))
+            Console.WriteLine("DrugRecordDrug:" + ac.RetrieveDrugRecordDrugs(patientID));
+            foreach (DrugRecordDrug z in ac.RetrieveDrugRecordDrugs(patientID))
             {
                 Console.WriteLine("?: " + z.DrugRecordDescription);
             }

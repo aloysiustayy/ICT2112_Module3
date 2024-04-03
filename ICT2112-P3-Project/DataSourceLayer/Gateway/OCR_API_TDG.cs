@@ -23,7 +23,8 @@ namespace DataSourceLayer.Gateway
         public async Task<string> DetectText(string base64EncodedImage)
         {
             // Remember to change to Your Own Google Vision API credentials
-            var serviceAccountPath = "C:\\Users\\isaac\\ICT2112\\ICT2112_Module3\\OCRAPI.json";
+            // var serviceAccountPath = "C:\\Users\\isaac\\ICT2112\\ICT2112_Module3\\ocr.json";
+            var serviceAccountPath = "D:\\Applications\\OneDrive - Singapore Institute Of Technology\\Year2Tri2\\ICT2112\\Project\\ICT2112_Module3\\ICT2112-P3-Project\\ocrapi.json";
 
             // Authenticate with the service account
             var credential = GoogleCredential.FromFile(serviceAccountPath)
@@ -41,7 +42,7 @@ namespace DataSourceLayer.Gateway
             // Make the POST request to the Vision API
             var response = await httpClient.PostAsync("https://vision.googleapis.com/v1/images:annotate", content);
 
-            if(response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
                 var responseContent = await response.Content.ReadAsStringAsync();
                 var textDetected = _adapter.ConvertFromJSON(responseContent);

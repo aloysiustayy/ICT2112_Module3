@@ -98,24 +98,6 @@ namespace DataSourceLayer.Gateway
 
         public List<DrugRecordDrug> GetDrugRecordDrugs(long patientID)
         {
-
-            // foreach (DrugRecordDrug x in _context.DrugRecordDrugs
-            //                         .Where(drugRecordDrug => drugRecordDrug.PatientID == patientID)
-            //                       .ToList())
-            // {
-            //     Console.WriteLine("TDG is " + x.Drug.DrugName + " | ");
-            // }
-            // var drugRecordDrugs = _context.DrugRecordDrugs
-            //                       .Include(drd => drd.Drug) // Assuming you have a navigation property to Drug
-            //                       .Include(drd => drd.DrugRecord) // Assuming you have a navigation property to DrugRecord
-            //                       .Where(drd => drd.PatientID == (long)patientID)
-            //                       .ToList();
-
-            // foreach (var drd in drugRecordDrugs)
-            // {
-            //     Console.WriteLine($"Drug?: {drd.Drug.DrugName}, Description: {drd.DrugRecordDescription}, PatientID: {drd.PatientID}");
-            // }
-
             return _context.DrugRecordDrugs
                                   .Where(drugRecordDrug => drugRecordDrug.PatientID == (long)patientID)
                                   .ToList();

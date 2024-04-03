@@ -32,7 +32,7 @@ namespace PresentationLayer.Controllers
 
         public IActionResult BookSession()
         {
-            
+
             return View("BookSession");
         }
 
@@ -43,7 +43,7 @@ namespace PresentationLayer.Controllers
 
             var viewModel = new MedicalCounsellingViewModel
             {
-                MedicationCounsellings = mc.retrieveAllRecord()
+                MedicationCounsellings = mc.RetrieveAllRecord()
             };
 
             return View(viewModel);
@@ -57,7 +57,7 @@ namespace PresentationLayer.Controllers
 
             MedicalCounsellingManagement medicalCounsellingManagement = new MedicalCounsellingManagement(_medicalCounsellingTDG);
 
-            medicalCounsellingManagement.createMedicalCounselling(patientID, counsellingType, additionalNotes);
+            medicalCounsellingManagement.CreateMedicalCounselling(patientID, counsellingType, additionalNotes);
             Console.WriteLine("Creating!");
 
             return RedirectToAction("BookSession");

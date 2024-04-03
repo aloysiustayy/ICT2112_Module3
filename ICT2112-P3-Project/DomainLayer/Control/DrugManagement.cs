@@ -17,15 +17,15 @@ namespace DomainLayer.Control
             _drugDbContext = drugDbContext;
         }
 
-        public Drug retrieveDrug(int drugID)
+        public Drug RetrieveDrug(int drugID)
         {
             return _drugDbContext.GetDrugByDrugId(drugID);
         }
-        public List<Drug> retrieveAllDrug()
+        public List<Drug> RetrieveAllDrug()
         {
             return _drugDbContext.GetAllDrugs();
         }
-        public void createDrug(int drugId, string name, string desc)
+        public void CreateDrug(int drugId, string name, string desc)
         {
             Drug tempDrug = new Drug
             {
@@ -36,28 +36,15 @@ namespace DomainLayer.Control
             };
             _drugDbContext.CreateDrug(tempDrug);
         }
+        public void UpdateDrug(int drugID, string name, string description)
+        {
+            DeleteDrug(drugID);
+            CreateDrug(drugID, name, description);
+        }
+        public void DeleteDrug(int drugID)
+        {
+            _drugDbContext.DeleteDrug(drugID);
+        }
 
-
-
-        // public List<Administrator> RetrieveAllAdministrativeAccount()
-        // {
-        //     return _administratorDbContext.GetAllAdministrators();
-        // }
-
-
-        /*        public void CreateAdministrativeAccount() {
-                    Administrator c = new Administrator();
-                    c.AdministratorId = 1;
-                    c.Identifier = "admin1";
-                    c.Password = "password123";
-                    c.NRIC = "123456789";
-                    c.FullName = "John Doe";
-                    c.Nationality = "US";
-                    c.PhoneNumber = 1234567890;
-                    c.EmailAddress = "admin@example.com";
-                    c.PreferredNotificationPlatform = "Email";
-
-                    _administratorDbContext.AddAdministrator(c);
-                }*/
     }
 }

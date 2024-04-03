@@ -40,7 +40,7 @@ namespace PresentationLayer.Controllers
             _prescriptionTDG = prescriptionTDG;
             _consumedDateTimeTDG = consumedDateTimeTDG;
             _medicationTrackerManagementLogger = medicationTrackerManagementLogger;
-            
+
         }
 
         [HttpPost]
@@ -72,14 +72,14 @@ namespace PresentationLayer.Controllers
                 {
                     _logger.LogInformation("Medication: {DrugID}, TimesPerDay: {TimesPerDay}, BeforeMeals: {BeforeMeals}",
                         model.MedicationEntries[i].DrugID, model.MedicationEntries[i].TimesPerDay, model.MedicationEntries[i].BeforeMeals);
-                    
+
                     var newTracker = await medicationTrackerManagement.CreateMedicationTracker(model.MedicationEntries[i].TimesPerDay, model.MedicationEntries[i].BeforeMeals);
                     var trackerId = newTracker.TrackingId;
 
                     int drugID = Convert.ToInt32(model.MedicationEntries[i].DrugID);
 
                     var prescription = await prescriptionManagement.CreatePrescription(planId, trackerId, drugID);
-                    prescription.Drug = dm.retrieveDrug(drugID);
+                    prescription.Drug = dm.RetrieveDrug(drugID);
                     prescriptions.Add(prescription);
                 }
                 planBuilder.SetPrescriptions(prescriptions);
@@ -125,10 +125,10 @@ namespace PresentationLayer.Controllers
             DrugRecordManagement ac = new DrugRecordManagement(_drugRecordTDG);
             var drugRecordViewModel = new DrugRecordViewModel
             {
-                Drugs = dm.retrieveAllDrug(),
-                DrugRecordDrug = ac.retrieveDrugRecordDrugs(patientID)
+                Drugs = dm.RetrieveAllDrug(),
+                DrugRecordDrug = ac.RetrieveDrugRecordDrugs(patientID)
             };
-            
+
             return View(drugRecordViewModel);
         }
 
@@ -136,14 +136,11 @@ namespace PresentationLayer.Controllers
         {
             DrugManagement dm = new DrugManagement(_drugTDG);
             DrugRecordManagement ac = new DrugRecordManagement(_drugRecordTDG);
-            var test = ac.retrieveDrugRecords(patientID);
-            _logger.LogInformation("DrugRecord: {DrugRecord}", test[1].DrugRecordID);
-
 
             var drugRecordViewModel = new DrugRecordViewModel
             {
-                Drugs = dm.retrieveAllDrug(),
-                DrugRecordDrug = ac.retrieveDrugRecordDrugs(patientID),
+                Drugs = dm.RetrieveAllDrug(),
+                DrugRecordDrug = ac.RetrieveDrugRecordDrugs(patientID),
             };
             return View(drugRecordViewModel);
 
@@ -165,7 +162,7 @@ namespace PresentationLayer.Controllers
             List<Prescription> tracker = new List<Prescription>();
             foreach (var drugId in selectedDrugIds)
             {
-                tracker.Add(new Prescription { DrugId = drugId, Drug = dm.retrieveDrug((int)drugId), MedicationTracker = new MedicationTracker() });
+                tracker.Add(new Prescription { DrugId = drugId, Drug = dm.RetrieveDrug((int)drugId), MedicationTracker = new MedicationTracker() });
             }
 
             var planBuilder = new MedicalPlanBuilder();
