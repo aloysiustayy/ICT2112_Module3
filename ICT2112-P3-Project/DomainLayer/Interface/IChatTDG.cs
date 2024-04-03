@@ -7,5 +7,7 @@ namespace DomainLayer.Interface
     {
         void InsertMessage(TextMessage message);
         List<TextMessage> GetMessagesBetweenUsers(int userId, int chatPartnerId);
+        void UpdateMessageReadStatus(int messageId, bool readStatus);
+        TextMessage GetMessageById(int messageId);
     }
 }

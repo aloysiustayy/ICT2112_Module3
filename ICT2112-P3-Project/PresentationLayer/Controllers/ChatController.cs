@@ -6,6 +6,7 @@ using PresentationLayer.ViewModel; // Update this namespace based on your projec
 using System.Linq;
 using DomainLayer.Entity;
 using DomainLayer.Factory;
+using System.Text.Json;
 
 namespace PresentationLayer.Controllers
 {
@@ -21,20 +22,28 @@ namespace PresentationLayer.Controllers
         }
         // Other actions remain unchanged
 
-        public IActionResult Chat(int userId, int chatPartnerId)
+        public IActionResult Chat()
         {
-            var messages = _chatControl.RetrieveMessages(1, 2);
-            var chatPartnerName = _context.Users.FirstOrDefault(u => u.id == 2)?.name;
+            int testUserId = 2; // Simulate logged-in user with ID 1
+            int testChatPartnerId = 1; // Simulate chat partner with ID 2
 
+            // Retrieve messages between the test user and test chat partner
+            var messages = _chatControl.RetrieveMessages(testUserId, testChatPartnerId);
+
+            // Get the test chat partner's name
+            var chatPartnerName = _context.Users.FirstOrDefault(u => u.id == testChatPartnerId)?.name;
+
+            // Prepare the view model with test data
             var model = new ChatViewModel
             {
-                CurrentUserId = 1,
-                ChatPartnerId = 2,
+                CurrentUserId = testUserId,
+                ChatPartnerId = testChatPartnerId,
                 ChatPartnerName = chatPartnerName ?? "Unknown",
                 Messages = messages
             };
 
-            return View(model);
+            // Render the Chat view with the test data
+            return View("Chat", model); // Make sure you pass the "Chat" view if your test method has a different name
         }
 
         public IActionResult Index()
@@ -59,6 +68,22 @@ namespace PresentationLayer.Controllers
         {
             var messages = _chatControl.RetrieveMessages(userId, chatPartnerId);
             return Json(messages);
+        }
+
+        [HttpPost]
+        public IActionResult MarkMessagesAsRead([FromForm] List<int> messageIds, [FromForm] int currentUserId)
+        {
+            if (messageIds == null || !messageIds.Any())
+            {
+                return Json(new { success = false, message = "No message IDs provided." });
+            }
+
+            foreach (var messageId in messageIds)
+            {
+                _chatControl.MarkMessageAsRead(messageId, currentUserId);
+            }
+
+            return Json(new { success = true });
         }
 
     }

@@ -8,5 +8,6 @@ namespace DomainLayer.Entity
         int sender_id { get; set; }
         int receiver_id { get; set; }
         DateTime created_at { get; set; }
+        bool read {  get; set; }
     }
 }
