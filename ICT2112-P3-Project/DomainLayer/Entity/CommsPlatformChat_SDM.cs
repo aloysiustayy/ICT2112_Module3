@@ -18,7 +18,7 @@ public class CommsPlatformChat_SDM
     public string ChatDescription { get; set; }
     public string MeetingTopic { get; set; }
     public string MeetingDateTime { get; set; }
-    public int MeetingDuration { get; set; }
+    public string MeetingDuration { get; set; }
     public string MeetingDescription { get; set; }
     public string ZoomLink { get; set; }
 
