@@ -539,8 +539,6 @@ public partial class DataContext : DbContext
         {
             entity.ToTable("Communication");
 
-            entity.Property(e => e.ChatId).HasColumnName("chatId");
-            entity.Property(e => e.ChatDescription).HasColumnName("chatDescription");
             entity.Property(e => e.MeetingTopic).HasColumnName("meetingTopic");
             entity.Property(e => e.MeetingDateTime).HasColumnName("meetingDateTime");
             entity.Property(e => e.MeetingDuration).HasColumnName("meetingDuration");

@@ -25,7 +25,6 @@ namespace PresentationLayer.Controllers
         {
             var meetingDetails = new CommsPlatformChat_SDM
             {
-                ChatDescription = Request.Form["ChatDescription"],
                 MeetingTopic = Request.Form["MeetingTopic"],
                 MeetingDateTime = DateTime.Now.ToString(),
                 MeetingDuration = Request.Form["MeetingDuration"],
@@ -36,7 +35,6 @@ namespace PresentationLayer.Controllers
             {
                 Console.WriteLine(meetingDetails);
                 _communicationControl.CreateZoomMeeting(
-                    meetingDetails.ChatDescription,
                     meetingDetails.MeetingTopic,
                     meetingDetails.MeetingDateTime,
                     meetingDetails.MeetingDuration,
