@@ -568,31 +568,7 @@
     <div class="container-fluid">
 
         <h1 class="display-4">Administrators</h1>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Full Name</th>
-                    <!-- Add more columns as needed -->
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var administrator in Model)
-                {
-                    <tr>
-                        <td>@administrator.AdministratorId</td>
-                        <td>@administrator.Identifier</td>
-                        <td>@administrator.Password</td>
-                        <td>@administrator.Nric</td>
-                        <td>@administrator.FullName</td>
-                        <td>@administrator.Nationality</td>
-                        <td>@administrator.EmailAddress</td>
-                        <td>@administrator.PhoneNumber</td>
-                        <td>@administrator.PreferredNotificationPlatform</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+
 
 
     </div>

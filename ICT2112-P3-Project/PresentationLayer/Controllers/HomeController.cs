@@ -9,21 +9,8 @@ namespace PresentationLayer.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IAdministratorTDG _administratorDbContext;
-
-        public HomeController(ILogger<HomeController> logger, IAdministratorTDG administratorDbContext)
-        {
-            _logger = logger;
-            _administratorDbContext = administratorDbContext;
-        }
 
         public IActionResult Index()
-        {
-            AdministratorControl ac = new AdministratorControl(_administratorDbContext);
-            return View(ac.RetrieveAllAdministrativeAccount());
-        }
-
-        public IActionResult Privacy()
         {
             return View();
         }

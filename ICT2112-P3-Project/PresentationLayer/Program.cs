@@ -3,7 +3,6 @@ using DomainLayer.Interface;
 using DataSourceLayer.Data;
 using DataSourceLayer.Gateway;
 using DomainLayer.Control;
-using DataSourceLayer.Interface;
 using DomainLayer.Factory;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,26 +13,7 @@ builder.Services.AddDbContext<DataContext>(options =>
                 options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Register data source layer abstractions to decouple.
-builder.Services.AddScoped<IAdministratorTDG, AdministratorTDG>();
 
-// Team 7
-builder.Services.AddScoped<IMedicalPlanTDG, MedicalPlanTDG>();
-
-builder.Services.AddScoped<IMedicationTrackerTDG, MedicationTrackerTDG>();
-
-builder.Services.AddScoped<IConsumedDateTimeTDG, ConsumedDateTimeTDG>();
-
-builder.Services.AddScoped<IOCR_API_TDG, OCR_API_TDG>();
-
-builder.Services.AddScoped<IPrescriptionTDG, PrescriptionTDG>();
-
-builder.Services.AddScoped<IOCR_Adapter, OCR_Adapter>();
-
-builder.Services.AddScoped<IDrugRecordTDG, DrugRecordTDG>();
-
-builder.Services.AddScoped<IDrugTDG, DrugTDG>();
-
-builder.Services.AddScoped<IMedicalCounsellingTDG, MedicalCounsellingTDG>();
 
 // Team 4
 builder.Services.AddScoped<PhotoControl>();
@@ -48,7 +28,7 @@ builder.Services.AddScoped<ISafetyChecklistTDG, SafetyChecklistTDG>();
 builder.Services.AddScoped<ICommunicationTDG, CommunicationTDG>();
 builder.Services.AddScoped<IChatTDG, ChatTDG>();
 builder.Services.AddScoped<IMessageFactory, TextMessageFactory>();
-builder.Services.AddScoped<IMedicalPlanTDG, MedicalPlanTDG>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
