@@ -19,5 +19,7 @@ namespace DomainLayer.Interface
         public void DeleteChat(CommsPlatformChat_SDM chatId);
 
         public void InsertZoomLink(CommsPlatformChat_SDM chatId);
+
+        public void CreateZoomMeeting(CommsPlatformChat_SDM meeting);
     }
 }

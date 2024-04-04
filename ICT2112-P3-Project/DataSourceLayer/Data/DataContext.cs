@@ -703,6 +703,7 @@ public partial class DataContext : DbContext
             entity.Property(e => e.receiver_id).HasColumnName("receiver_id").IsRequired(); // Assuming receiver_id is required
             entity.Property(e => e.message).HasColumnName("message").HasColumnType("TEXT").IsRequired(); // Assuming message is required and of type TEXT
             entity.Property(e => e.created_at).HasColumnName("created_at").HasColumnType("DATETIME"); // Assuming created_at is a DATETIME
+            entity.Property(e => e.read).HasColumnName("read").HasColumnType("BOOL"); 
         });
 
         OnModelCreatingPartial(modelBuilder);

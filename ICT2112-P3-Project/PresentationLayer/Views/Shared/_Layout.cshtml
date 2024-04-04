@@ -60,8 +60,10 @@
                     <li><a class="nav-link @((ViewContext.RouteData.Values["controller"].ToString() == "DocumentationInput") ? "active" : "")"
                             asp-controller="DocumentationInput" asp-action="Documentation">Documentation</a>
                     <li><a class="nav-link @((ViewContext.RouteData.Values["controller"].ToString() == "Communication") ? "active" : "")"
-                            asp-controller="Communication" asp-action="Index">Communication</a>
-
+                           asp-controller="Communication" asp-action="Index">Communication</a>
+                    <li>
+                        <a class="nav-link @((ViewContext.RouteData.Values["controller"].ToString() == "Chat") ? "active" : "")"
+                           asp-controller="Chat" asp-action="Chat">Chat</a>
 
                 </ul>
                 <i class="bi bi-list mobile-nav-toggle"></i>

@@ -3,22 +3,10 @@
 @{
     ViewData["Title"] = "Chat";
 }
-<div class="chat-room-container">
 
+<div class="chat-room-container" data-current-user-id="@Model.CurrentUserId">
     <div id="messages-container">
-@foreach (var message in Model.Messages)
-{
-    <div class="message @(message.sender_id == Model.CurrentUserId ? "outgoing" : "incoming")">
-        <div class="message-content">
-            @if (message.sender_id != Model.CurrentUserId)
-            {
-                <strong>@Model.ChatPartnerName:</strong>
-            }
-            @message.message
-        </div>
-        <div class="message-time"><small>@message.created_at.ToString("o")</small></div>
-    </div>
-}
+        <!-- Messages will be loaded by JavaScript -->
     </div>
 
     <form id="messageForm">
@@ -37,123 +25,182 @@
         $(document).ready(function () {
             $('#messageForm').submit(function (e) {
                 e.preventDefault();
-                var messageData = $(this).serialize();
+                var messageData = {
+                    senderId: '@Model.CurrentUserId',
+                    receiverId: '@Model.ChatPartnerId',
+                    message: $('textarea[name="message"]').val()
+                };
                 $.ajax({
                     type: 'POST',
                     url: '@Url.Action("SendMessage", "Chat")',
                     data: messageData,
                     success: function (response) {
-                        if (response.success) {
-                            var isOutgoing = true; // Since the message we're sending is always outgoing
-                            var messageElement = createMessageElement(response, isOutgoing);
-                            $('#messages-container').append(messageElement);
-                            $('textarea[name="message"]').val('');
-                            $('#messages-container').scrollTop($('#messages-container')[0].scrollHeight);
-                        }
+                        fetchMessages(); // Refresh the message list after sending a message
+                        $('textarea[name="message"]').val(''); // Clear the text area
                     }
                 });
             });
 
-            function fetchMessages() {
-                var userId = '@Model.CurrentUserId';
-                var chatPartnerId = '@Model.ChatPartnerId';
+            function createMessageElement(message, isOutgoing) {
+                var messageClass = isOutgoing ? 'outgoing' : 'incoming';
+                var readStatusText = isOutgoing ? (message.read ? " - Read" : " - Unread") : ""; // Adjusting read status text
+
+                var messageElement = $('<div>').addClass(`message ${messageClass}`);
+                var messageContent = $('<div>').addClass('message-content').text(message.message);
+
+                var readStatus = $('<span>').addClass('read-status').text(readStatusText);
+
+                if (isOutgoing) {
+                    messageContent.prepend($('<strong>').text('You: '));
+                } else {
+                    messageContent.prepend($('<strong>').text('@Model.ChatPartnerName: '));
+                }
+
+                messageContent.append(readStatus); // Append read status to the message content
+                messageElement.append(messageContent);
+                messageElement.attr('data-message-id', message.id);
+                return messageElement;
+            }
+
+            function markMessageAsRead(messageIds) {
+                var currentUserId = $('.chat-room-container').data('current-user-id');
                 $.ajax({
-                    url: '@Url.Action("RetrieveMessages", "Chat")' + '?userId=' + userId + '&chatPartnerId=' + chatPartnerId,
-                    success: function (messages) {
-                        $('#messages-container').empty();
-                        messages.forEach(function (message) {
-                            var isOutgoing = message.sender_id === '@Model.CurrentUserId';
-                            var messageElement = createMessageElement(message, isOutgoing);
-                            $('#messages-container').append(messageElement);
-                        });
-                        $('#messages-container').scrollTop($('#messages-container')[0].scrollHeight);
+                    type: 'POST',
+                    url: '@Url.Action("MarkMessagesAsRead", "Chat")',
+                    data: { messageIds: messageIds, currentUserId: currentUserId }, // Send as form data
+                    success: function (response) {
+                        console.log('Message marked as read', response);
+                    },
+                    error: function (error) {
+                        console.error('Error marking message as read', error);
                     }
                 });
             }
-function createMessageElement(message, isOutgoing) {
-    var messageClass = isOutgoing ? 'outgoing' : 'incoming';
-    var createdAt = new Date(message.created_at);
-    if (isNaN(createdAt)) {
-        // Fallback in case of parsing failure
-        createdAt = new Date();
-    }
-    var formattedDate = createdAt.toLocaleString();
-    var messageElement = $('<div class="message ' + messageClass + '">');
-    var messageContent = $('<div class="message-content">').text(message.message);
-    var messageTime = $('<div class="message-time">').html('<small>' + formattedDate + '</small>');
 
-    // Display chat partner's name only for incoming messages
-    if (!isOutgoing) {
-        messageContent.prepend($('<strong>').text('@Model.ChatPartnerName: '));
-    }
+            function fetchMessages() {
+                $.ajax({
+                    url: '@Url.Action("RetrieveMessages", "Chat")',
+                    data: { userId: '@Model.CurrentUserId', chatPartnerId: '@Model.ChatPartnerId' },
+                    success: function (messages) {
+                        // Sort the messages by created_at timestamp
+                        messages.sort(function (a, b) {
+                            return new Date(a.created_at) - new Date(b.created_at);
+                        });
 
-    messageElement.append(messageContent).append(messageTime);
-    return messageElement;
-}
+                        var messageContainer = $('#messages-container');
+                        messageContainer.empty();
+                        var messageIds = [];
+                        messages.forEach(function (message) {
+                            var isOutgoing = message.sender_id === @Model.CurrentUserId;
+                            var messageElement = createMessageElement(message, isOutgoing);
+                            messageContainer.append(messageElement);
 
+                            if (!isOutgoing) { // Assuming you only mark incoming messages as read
+                                messageIds.push(message.id);
+                            }
+                        });
+                        if (messageIds.length > 0) {
+                            markMessageAsRead(messageIds);
+                        }
+                        checkAndMarkMessagesAsRead();
+                    }
+                });
+            }
 
-            // Fetch new messages every 5 seconds
-            setInterval(fetchMessages, 5000);
+            function isElementInView(element) {
+                var elementTop = $(element).offset().top;
+                var elementBottom = elementTop + $(element).outerHeight();
+
+                var viewportTop = $(window).scrollTop();
+                var viewportBottom = viewportTop + $(window).height();
+
+                return elementBottom > viewportTop && elementTop < viewportBottom;
+            }
+
+            var windowFocused = true;
+
+            $(window).on('focus', function () {
+                windowFocused = true;
+            });
+
+            $(window).on('blur', function () {
+                windowFocused = false;
+            });
+
+            function checkAndMarkMessagesAsRead() {
+                $('.message.incoming:not(.read)').each(function () {
+                    if (isElementInView(this) && windowFocused) {
+                        var messageId = $(this).data('messageId'); // Ensure each message element has a data-message-id attribute
+                        markMessageAsRead(messageId);
+                        $(this).addClass('read'); // Mark the message as read visually and to avoid re-checking it
+                    }
+                });
+            }
+
+            fetchMessages(); // Initial fetch of messages
+            setInterval(fetchMessages, 3000); // Refresh messages every 3 seconds
         });
     </script>
-
+}
 <style>
     .chat-room-container {
-        border: 1px solid #ccc;
-        padding: 10px;
-        width: 100%; /* Set width to cover the whole page */
-        height: 100vh; /* Set height to cover the whole viewport */
+        /* Your existing styles */
         display: flex;
         flex-direction: column;
-        background-color: #fff; /* Set background color to white */
+        width: 100%;
+        height: 100vh;
+        background-color: #fff;
+        padding: 10px;
+        border: 1px solid #ccc;
     }
 
     #messages-container {
-        overflow-y: auto;
+        /* Your existing styles */
         flex-grow: 1;
-        margin-bottom: 10px;
+        overflow-y: auto;
         padding: 5px;
-        border: 1px solid #ccc; /* Add a border and some padding around the messages */
-        background-color: #fff; /* Set background color to white */
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        background-color: #f9f9f9;
     }
 
     .message {
-        padding: 10px;
+        /* Your existing styles */
         margin-bottom: 10px;
-        border-radius: 10px; /* Rounded corners for messages */
-        color: #000; /* Set text color to black */
-        background-color: #fff; /* Set background color to white */
+        padding: 10px;
+        border-radius: 10px;
+        background-color: #f1f1f1;
+    }
+
+    .outgoing {
+        /* Your existing styles for outgoing messages */
+        background-color: #DCF8C6; /* Light green background for visual differentiation */
+        align-self: flex-end;
+    }
+
+    .incoming {
+        /* Your existing styles for incoming messages */
+        background-color: #ECECEC; /* Light grey background */
+        align-self: flex-start;
     }
 
     .message-content {
+        /* Your existing styles */
         margin-bottom: 5px;
     }
 
-    .message-time {
-        text-align: right;
-        font-size: 0.85em;
-        color: #000; /* Set timestamp color to black */
+    .read-status {
+        margin-left: 10px;
+        font-weight: bold;
     }
 
-    form#messageForm {
-        display: flex;
-        gap: 10px;
+    /* Optionally, add specific colors for read and unread statuses */
+    .message.outgoing .read-status {
+        color: #4CAF50; /* Green for "Read" messages */
     }
 
-    form#messageForm textarea {
-        flex-grow: 1;
-        padding: 10px;
-        color: #000; /* Set text color to black */
-        background-color: #fff; /* Set background color to white */
-        border: 1px solid #ccc; /* Optional: add a border to the textarea */
-    }
-
-    form#messageForm button {
-        padding: 10px 20px;
-        color: #000; /* Set button text color to black */
-        background-color: #fff; /* Set button background color to white */
-        border: 1px solid #ccc; /* Optional: add a border to the button */
-    }
+        .message.outgoing .read-status:contains('Unread') {
+            color: #FF5722; /* Red or another color for "Unread" messages for better visibility */
+        }
 </style>
-
-}
+</style>

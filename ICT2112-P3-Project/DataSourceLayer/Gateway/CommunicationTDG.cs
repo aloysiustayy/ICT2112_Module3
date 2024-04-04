@@ -38,6 +38,12 @@ namespace DataSourceLayer.Gateway
 
         }
 
+        public void CreateZoomMeeting(CommsPlatformChat_SDM meeting)
+        {
+            _context.Communication.Add(meeting);
+            _context.SaveChanges();
+        }
+
         public void InsertZoomLink(CommsPlatformChat_SDM chatId)
         {
             _context.Communication.Add(chatId);

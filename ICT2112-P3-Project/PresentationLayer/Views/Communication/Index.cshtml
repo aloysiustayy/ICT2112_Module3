@@ -28,10 +28,20 @@
 
 <script>
     document.getElementById('zoomMeetingForm').addEventListener('submit', function (event) {
-        event.preventDefault();  // Prevent the form from submitting through the HTTP POST.
-        setTimeout(function () {
-            // Show the success message
+        event.preventDefault(); // Prevent the default form submission.
+
+        var formData = new FormData(this); // Assuming 'this' is the form element.
+
+        fetch('/Communication', { // Adjust the URL as necessary.
+            method: 'POST',
+            body: formData
+        }).then(response => {
+            console.log('Success:', response);
+            // Handle success (show success message)
             document.getElementById('successMessage').style.display = 'block';
-        }, 500);
+        }).catch(error => {
+            console.error('Error:', error);
+            // Handle error.
+        });
     });
 </script>
