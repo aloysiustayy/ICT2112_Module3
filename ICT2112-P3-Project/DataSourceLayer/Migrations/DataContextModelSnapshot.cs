@@ -156,6 +156,48 @@ namespace DataSourceLayer.Migrations
                     b.ToTable("Chatbot", (string)null);
                 });
 
+            modelBuilder.Entity("DomainLayer.Entity.CommsPlatformChat_SDM", b =>
+                {
+                    b.Property<long>("ChatId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("chatId");
+
+                    b.Property<string>("ChatDescription")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("chatDescription");
+
+                    b.Property<string>("MeetingDateTime")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("meetingDateTime");
+
+                    b.Property<string>("MeetingDescription")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("meetingDescription");
+
+                    b.Property<string>("MeetingDuration")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("meetingDuration");
+
+                    b.Property<string>("MeetingTopic")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("meetingTopic");
+
+                    b.Property<string>("ZoomLink")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("zoomLink");
+
+                    b.HasKey("ChatId");
+
+                    b.ToTable("Communication", (string)null);
+                });
+
             modelBuilder.Entity("DomainLayer.Entity.ConsumedDateTime", b =>
                 {
                     b.Property<long>("MedicationTrackerId")
@@ -1155,6 +1197,60 @@ namespace DataSourceLayer.Migrations
                     b.HasIndex("PatientId");
 
                     b.ToTable("Safety Checklist Assessment", (string)null);
+                });
+
+            modelBuilder.Entity("DomainLayer.Entity.TextMessage", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("created_at")
+                        .HasColumnType("DATETIME")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("message")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("message");
+
+                    b.Property<bool>("read")
+                        .HasColumnType("BOOL")
+                        .HasColumnName("read");
+
+                    b.Property<int>("receiver_id")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("receiver_id");
+
+                    b.Property<int>("sender_id")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("sender_id");
+
+                    b.HasKey("id");
+
+                    b.ToTable("TextMessage", (string)null);
+                });
+
+            modelBuilder.Entity("DomainLayer.Entity.Users", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("created_at")
+                        .HasColumnType("DATETIME")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("name");
+
+                    b.HasKey("id");
+
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("DomainLayer.Entity.Audit", b =>
