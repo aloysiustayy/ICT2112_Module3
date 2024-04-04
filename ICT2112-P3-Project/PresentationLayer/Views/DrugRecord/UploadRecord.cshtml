@@ -13,11 +13,11 @@
             const componentHTML = `
             <div class="drug-group">
                 <label for="drugName">Drug Name:</label>
-                <select class="form-control" name="drugNames[]">
+                <select class="form-control" name="drugIDs[]">
                     <option value="">Select a Drug</option>
     @foreach (var drug in Model.Drugs)
     {
-                                    <option value=@drug.DrugId>@drug.DrugName</option>
+                                        <option value=@drug.DrugId>@drug.DrugName</option>
     }
                 </select>
                 <label for="drugDesc">Description:</label>
