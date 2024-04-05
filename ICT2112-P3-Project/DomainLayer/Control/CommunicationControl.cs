@@ -33,15 +33,5 @@ namespace DomainLayer.Control
 
             _communicationDbContext.CreateZoomMeeting(meeting);
         }
-
-        public void RetrieveZoomMeeting()
-        {
-            //For GM to retrieve Zoom meeting
-        }
-
-        public void AddMessages()
-        {
-            //For GM to add messages
-        }
     }
 }
