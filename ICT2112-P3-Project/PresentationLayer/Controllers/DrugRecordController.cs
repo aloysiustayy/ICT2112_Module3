@@ -37,14 +37,12 @@ namespace PresentationLayer.Controllers
 
             for (int i = 0; i < drugIDs.Length; i++)
             {
-                var drugName = drugIDs[i];
-                var drugDesc = "";
-                if (i <= drugDescs.Length)
-                    drugDesc = drugDescs[i];
+                var drugID = drugIDs[i];
+                var drugDesc = drugDescs[i];
                 // Assuming Drug constructor or a method to create a Drug from name
                 // var drug = new Drug { DrugName = drugName };
 
-                var drug = _drugTDG.GetDrugByDrugId(drugName);
+                var drug = _drugTDG.GetDrugByDrugId(drugID);
                 Console.WriteLine("Drug to insert into is: " + drug.DrugName);
                 var pair = new KeyValuePair<Drug, string>(drug, drugDesc);
                 drugsWithDesc.Add(pair);
@@ -53,7 +51,7 @@ namespace PresentationLayer.Controllers
             // Assuming createDrugRecord expects a patientId and a list of KeyValuePair<Drug, string>
             drugRecordManagement.CreateDrugRecord(patientID, drugsWithDesc);
             Console.WriteLine("Creating!!!");
-            // _logger.LogInformation("Generating plan for plan ID {PlanId}", planId);
+
             return RedirectToAction("UploadRecord");
         }
 
