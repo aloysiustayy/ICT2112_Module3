@@ -28,7 +28,6 @@ namespace PresentationLayer.Controllers
             {
                 LocationCategory = "dummy",
                 RiskTitle = "dummy",
-                RiskComment = "dummy",
                 RiskDescription = "dummy",
                 PhotoId = 1 // Assuming a placeholder photo ID
             };
@@ -79,7 +78,7 @@ namespace PresentationLayer.Controllers
                             // Add checklist data to the document
                             document.Add(new Paragraph($"Location Category: {checklist.LocationCategory}"));
                             document.Add(new Paragraph($"Risk Title: {checklist.RiskTitle}"));
-                            document.Add(new Paragraph($"Risk Comment: {checklist.RiskComment}"));
+                            
                             document.Add(new Paragraph($"Risk Description: {checklist.RiskDescription}"));
                             document.Add(new AreaBreak(AreaBreakType.NEXT_PAGE)); // Add a page break
                         }

@@ -34,7 +34,6 @@
                         <div>
                             <input type="hidden" name="LocationCategory" value="Kitchen">
                             <p>Risk Title: <input type="text" name="RiskTitle" value="Floor is slippery"></p>
-                            <p>Risk Comment: <input type="text" name="RiskComment" value="Resolve this soon"></p>
                             <p>Risk Description: <input type="text" name="RiskDescription" value="Floor with water"></p>
                             <!-- Add other fields as necessary -->
                         </div>
@@ -49,7 +48,6 @@
                         <div>
                             <input type="hidden" name="LocationCategory" value="Bedroom">
                             <p>Risk Title: <input type="text" name="RiskTitle" value="Bedroom risk title"></p>
-                            <p>Risk Comment: <input type="text" name="RiskComment" value="Bedroom risk comment"></p>
                             <p>Risk Description: <input type="text" name="RiskDescription" value="Messy Bedroom with random items lying around"></p>
                             <!-- Add other fields as necessary -->
                         </div>
@@ -64,7 +62,6 @@
                         <div>
                             <input type="hidden" name="LocationCategory" value="Bathroom">
                             <p>Risk Title: <input type="text" name="RiskTitle" value="Bathroom risk title"></p>
-                            <p>Risk Comment: <input type="text" name="RiskComment" value="Bathroom risk comment"></p>
                             <p>Risk Description: <input type="text" name="RiskDescription" value="Broken sewage"></p>
                             <!-- Add other fields as necessary -->
                         </div>
@@ -79,7 +76,6 @@
                         <div>
                             <input type="hidden" name="LocationCategory" value="Living Room">
                             <p>Risk Title: <input type="text" name="RiskTitle" value="Living room risk title"></p>
-                            <p>Risk Comment: <input type="text" name="RiskComment" value="Living room risk comment"></p>
                             <p>Risk Description: <input type="text" name="RiskDescription" value="Random things lying around on floor"></p>
                             <!-- Add other fields as necessary -->
                         </div>
@@ -94,7 +90,6 @@
                         <div>
                             <input type="hidden" name="LocationCategory" value="Entrances and Exits">
                             <p>Risk Title: <input type="text" name="RiskTitle" value="Entrances and exits risk title"></p>
-                            <p>Risk Comment: <input type="text" name="RiskComment" value="Entrances and exits risk comment"></p>
                             <p>Risk Description: <input type="text" name="RiskDescription" value="Wet Floor"></p>
                             <!-- Add other fields as necessary -->
                         </div>
@@ -174,14 +169,12 @@
         // Get input values from the section
         var locationCategory = section.querySelector('strong').textContent.trim();
         var riskTitle = section.nextElementSibling.querySelector('input[name="RiskTitle"]').value.trim();
-        var riskComment = section.nextElementSibling.querySelector('input[name="RiskComment"]').value.trim();
         var riskDescription = section.nextElementSibling.querySelector('input[name="RiskDescription"]').value.trim();
 
         // Create a safety checklist object
         var checklist = {
             LocationCategory: locationCategory,
             RiskTitle: riskTitle,
-            RiskComment: riskComment,
             RiskDescription: riskDescription
         };
 
