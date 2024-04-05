@@ -17,19 +17,19 @@ namespace DomainLayer.Control
             _safetyChecklistTDG = safetyChecklistTDG;
         }
 
-        public IEnumerable<SafetyChecklist> RetrieveAllSafetyChecklists()
+        public IEnumerable<SafetyChecklist> GetAllSafetyChecklists()
         {
             return _safetyChecklistTDG.GetAllSafetyChecklists();
         }
 
-        public SafetyChecklist RetrieveSafetyChecklistById(int safetyChecklistId)
+        public SafetyChecklist GetSafetyChecklistById(int safetyChecklistId)
         {
             return _safetyChecklistTDG.GetSafetyChecklistById(safetyChecklistId);
         }
 
-        public void AddSafetyChecklist(SafetyChecklist safetyChecklist)
+        public void CreateSafetyChecklist(SafetyChecklist safetyChecklist)
         {
-            _safetyChecklistTDG.AddSafetyChecklist(safetyChecklist);
+            _safetyChecklistTDG.CreateSafetyChecklist(safetyChecklist);
         }
 
         public void UpdateSafetyChecklist(SafetyChecklist safetyChecklist)
@@ -37,7 +37,7 @@ namespace DomainLayer.Control
             _safetyChecklistTDG.UpdateSafetyChecklist(safetyChecklist);
         }
 
-        public void RemoveSafetyChecklist(int safetyChecklistId)
+        public void DeleteSafetyChecklist(int safetyChecklistId)
         {
             _safetyChecklistTDG.DeleteSafetyChecklist(safetyChecklistId);
         }

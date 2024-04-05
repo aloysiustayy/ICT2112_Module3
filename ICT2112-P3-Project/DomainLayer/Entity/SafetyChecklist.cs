@@ -13,7 +13,6 @@ public partial class SafetyChecklist
 
     public string RiskDescription { get; set; } = null!;
 
-    public string RiskComment { get; set; } = null!;
-
     public long PhotoId { get; set; }
+    public Photo Photo { get; internal set; }
 }

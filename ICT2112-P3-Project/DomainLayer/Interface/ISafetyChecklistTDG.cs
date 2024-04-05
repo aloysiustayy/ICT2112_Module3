@@ -12,7 +12,7 @@ namespace DomainLayer.Interface
         SafetyChecklist GetSafetyChecklistById(int safetyChecklistId);
         public IEnumerable<SafetyChecklist> GetAllSafetyChecklists();
 
-        void AddSafetyChecklist(SafetyChecklist safetyChecklist);
+        void CreateSafetyChecklist(SafetyChecklist safetyChecklist);
         void UpdateSafetyChecklist(SafetyChecklist safetyChecklist);
         void DeleteSafetyChecklist(int safetyChecklistId);
     }

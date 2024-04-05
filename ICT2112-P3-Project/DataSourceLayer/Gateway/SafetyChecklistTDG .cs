@@ -23,7 +23,7 @@ namespace DataSourceLayer.Gateway
             return _context.SafetyChecklists.Find(safetyChecklistId);
         }
 
-        public void AddSafetyChecklist(SafetyChecklist safetyChecklist)
+        public void CreateSafetyChecklist(SafetyChecklist safetyChecklist)
         {
             _context.SafetyChecklists.Add(safetyChecklist);
             _context.SaveChanges();
